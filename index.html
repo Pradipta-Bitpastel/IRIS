@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arabic to English Translator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .translator {
+      max-width: 400px;
+      margin: auto;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="translator">
+    <h1>Arabic to English Translator</h1>
+    <input type="text" id="arabicInput" placeholder="Enter Arabic text" />
+    <button id="translateButton">Translate</button>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    async function translateArabicToEnglish(text) {
+      const apiKey = 'AIzaSyDy0LmeEz-CEu68KfzszWwqS0jIXZvVxq8'; // Replace with your API key
+      const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+      
+      const body = {
+        q: text,
+        source: "ar",
+        target: "en",
+        format: "text"
+      };
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.data.translations[0].translatedText;
+      } catch (error) {
+        console.error("Error translating text:", error);
+        return "Error translating text. Please try again.";
+      }
+    }
+
+    // Handle click event
+    document.getElementById('translateButton').addEventListener('click', async () => {
+      const arabicText = document.getElementById('arabicInput').value.trim();
+      const outputDiv = document.getElementById('output');
+
+      if (arabicText) {
+        outputDiv.textContent = "Translating...";
+        const translatedText = await translateArabicToEnglish(arabicText);
+        outputDiv.textContent = translatedText;
+      } else {
+        outputDiv.textContent = "Please enter some text to translate.";
+      }
+    });
+  </script>
+</body>
+</html>
+
+
