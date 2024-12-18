@@ -85,7 +85,7 @@ import CalenderSlider from "./CalenderSlider"
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRange } from 'react-date-range';
-import { addDays } from 'date-fns';
+import { addDays, set } from 'date-fns';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -222,6 +222,7 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const filterRef = useRef(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [deletedData, setDeletedData] = useState([])
   const [filterStatus, setFilterStatus] = useState({
     all: true,
     group: false,
@@ -825,12 +826,12 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
     if (Object.keys(searchByKeyState).length > 0) {
       changePageStatusAndFetchingListApi()
     }
-    if(Object.keys(onSearchCallDeciderStatus).length > 0){
+    if (Object.keys(onSearchCallDeciderStatus).length > 0) {
       $(".search_result_content_inner_button button").addClass("inactive")
-    }else{
+    } else {
       $(".search_result_content_inner_button button").removeClass("inactive")
     }
-   
+
     // if(Object.keys(searchByKeyState).length > 0 &&
     //                 searchByKeyState?.entities?.result?.length > 0 ||
     //               searchByKeyState?.groups?.result?.length > 0 ||
@@ -1138,9 +1139,8 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
           const prevAndNextMsgWithCurrent = preparePrevAndNextMsgWithCurrent(response?.data)
 
           setDetailInformationObject({ ...response?.data, type: 'message', prevAndNextMsgWithCurrent: prevAndNextMsgWithCurrent })
-
-
-
+          const randomDeleteData = getRandomData()
+          setDeletedData(randomDeleteData)
         }
         else {
 
@@ -1406,6 +1406,19 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
     // type: type
     // await searchFilterApi()
   };
+  function getRandomData() {
+    const max = 6; // Range is 0 to 5 inclusive
+    const dataCount = Math.floor(Math.random() * max); // Randomly choose how many values to return (0 to 5)
+    const dataSet = new Set();
+
+    while (dataSet.size < dataCount) {
+      const randomValue = Math.floor(Math.random() * max); // Generate random number between 0 and 5
+      dataSet.add(randomValue); // Add it to the set to avoid duplicates
+    }
+
+    return Array.from(dataSet);
+  }
+
 
   useEffect(() => {
     if (Object.keys(onSearchCallDeciderStatus).length > 0 && !categoryWiseStatus.people && !categoryWiseStatus.group && !categoryWiseStatus.message && Object.keys(searchByKeyState).length > 0) {
@@ -1420,7 +1433,8 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
   }, [sortingValue]);
   // }
   // console.log((Object.values(sortingValue).every(value => value === '')), 'dropdownValues');
-
+  console.log(deletedData.includes(7), 'deletedData');
+  
   // searchFilterApi()
   return (
     <>
@@ -2611,7 +2625,7 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
                         search_str={showLabel.searchStr}
                         postSearchByKeyApiRequest={postSearchByKeyApiRequest}
                         goToDetailsPage={goToDetailsPage}
-
+                        deletedData={deletedData}
 
                       />
                     :

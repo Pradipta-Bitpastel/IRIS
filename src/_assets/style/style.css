@@ -5809,3 +5809,13 @@ section.loader {
   font-family: poppins, sans-serif;
   font-weight: 700;
 }
+.search_group_details_inner_card.relative_pos.deleted{
+  opacity: .4;
+  pointer-events: none;
+}
+.search_group_details_inner_card.relative_pos.deleted .translator-btn{
+  display: none;
+}
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content p{
+  text-decoration: line-through !important;
+}

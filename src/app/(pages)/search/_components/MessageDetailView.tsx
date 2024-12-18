@@ -45,6 +45,7 @@ import { translateData } from "../types/type";
 type TProps = {
   messageDetails: Record<string, any>;
   search_str: string;
+  deletedData:any;
   postSearchByKeyApiRequest: (
     data: Record<string, any>,
     endpoint: string,
@@ -61,6 +62,7 @@ const MessageDetailView = ({
   search_str,
   postSearchByKeyApiRequest,
   goToDetailsPage,
+  deletedData
 }: TProps) => {
   const [translateData, setTranslateData] = useState<Array<translateData>>([]);
 
@@ -191,7 +193,7 @@ id={`group-${item?.id}`} */}
             <div className="search_group_details_main_card_body">
               {messageDetails?.prevAndNextMsgWithCurrent.map((item, index) => {
                 return (
-                  <div key={index} className="search_group_details_inner_card relative_pos">
+                  <div key={index} className={`search_group_details_inner_card relative_pos ${deletedData.includes(index) ? 'deleted' : ''}`}>
                     <div className="search_result_people_overlay" onClick={goToDetailsPage} id={`message-${item.id}`}></div>
                     <div className="search_group_details_inner_card_image profile_img_parent details-clickable-img-zIndex">
                       <img
