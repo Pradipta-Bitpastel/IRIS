@@ -45,34 +45,50 @@ const shuffleArray = <T>(array: T[]): T[] => {
 //     // return currentDate.toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
 // }
 // 2024-03-20T15:33:16Z
-const dateFormatter = (dateIsoStandard?: string, timeOutputFormat?: boolean) => {
-  if (timeOutputFormat) {
-    //get the time in HH:MM format
-    let dateObj = new Date();
-    return dateObj.getUTCHours() + ":" + dateObj.getUTCMinutes();
-  } else if (!timeOutputFormat && dateIsoStandard) {
-    //the date in day month year format.
-    // const getDate = dateIsoStandard.split("T")[0];
-    // const formatDate = getDate.split("-");
-    const toStringDate = new Date(dateIsoStandard).toString();
-const splittedDate = toStringDate.split(" ");
+// const dateFormatter = (dateIsoStandard?: string, timeOutputFormat?: boolean) => {
+//   if (timeOutputFormat) {
+//     //get the time in HH:MM format
+//     let dateObj = new Date();
+//     return dateObj.getUTCHours() + ":" + dateObj.getUTCMinutes();
+//   } else if (!timeOutputFormat && dateIsoStandard) {
+//     const toStringDate = new Date(dateIsoStandard).toString();
+//     const splittedDate = toStringDate.split(" ");
+//     return `${splittedDate[2]} ${splittedDate[1]} ${splittedDate[3]}`;
+//   } else if (!timeOutputFormat && !dateIsoStandard) {
+//     //today's date in day month year format
+//     let toStringDate = new Date().toString();
+//     let splittedDate = toStringDate.split(" ");
+//     return splittedDate[2] + " " + splittedDate[1] + " " + splittedDate[3];
+//   } //default ''
+//   else {
+//     return "";
+//   }
+// };
+const dateFormatter = (dateIsoStandard?: string, timeOutputFormat?: boolean): string => {
+  if (dateIsoStandard) {
+    const dateObj = new Date(dateIsoStandard);
 
-// Construct the desired format: "20 Dec 2023"
-// const currentDateTime = `${splittedDate[2]} ${splittedDate[1]} ${splittedDate[3]}`;
-
-
-    return `${splittedDate[2]} ${splittedDate[1]} ${splittedDate[3]}`;
-  } else if (!timeOutputFormat && !dateIsoStandard) {
-    //today's date in day month year format
-    let toStringDate = new Date().toString();
-    let splittedDate = toStringDate.split(" ");
-    return splittedDate[2] + " " + splittedDate[1] + " " + splittedDate[3];
-  } //default ''
-  else {
-    return "";
+    if (timeOutputFormat) {
+      // Format time as HH:MM
+      const hours = dateObj.getUTCHours().toString().padStart(2, "0");
+      const minutes = dateObj.getUTCMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}`;
+    } else {
+      // Format date as DD MMM YYYY
+      const day = dateObj.getUTCDate().toString().padStart(2, "0");
+      const month = dateObj.toLocaleString("en-US", { month: "short" }); // Get abbreviated month
+      const year = dateObj.getUTCFullYear();
+      return `${day} ${month} ${year}`;
+    }
+  } else {
+    // Default to today's date in DD MMM YYYY format
+    const now = new Date();
+    const day = now.getUTCDate().toString().padStart(2, "0");
+    const month = now.toLocaleString("en-US", { month: "short" });
+    const year = now.getUTCFullYear();
+    return `${day} ${month} ${year}`;
   }
 };
-
 // removeDuplicate is designed to remove duplicates from an array (arr_total) based on a unique key (uniqueKey) provided as a parameter.
 type AnyObject = { [key: string]: any };
 const removeDuplicate = <T extends AnyObject>(

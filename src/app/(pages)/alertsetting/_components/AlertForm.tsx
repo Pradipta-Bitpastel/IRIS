@@ -70,6 +70,8 @@ const AlertForm = ({ selectStoreValue, setSelectStoreValue, dropdownOptions, ini
                 toInputRef.current.value = '';
                 allAlertApi()
                 toast.success(`Alert has been added successfully !`, toastSettingData as ToastOptions<unknown>);
+            }else if(response?.status ==='ERROR'){
+                toast.error(response?.errors?.name && response?.errors?.name[0], toastSettingData as ToastOptions<unknown>);     
             }
         } catch (err) {
             console.log(err);

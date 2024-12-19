@@ -70,32 +70,42 @@ const alertSettingLeaf = () => {
       }));
     }
   }
-  function convertToDate(dateString) {
-    // Debug: Check the input value
-    console.log("Input dateString:", dateString);
+  // function convertToDate(dateString) {
+  //   // Debug: Check the input value
+  //   console.log("Input dateString:", dateString);
 
-    // Check for null, undefined, or empty string
-    if (dateString != 'null' || dateString === undefined) {
-      // Split the input string into year, month, and day
-      const [year, month, day] = dateString && dateString.split('-').map(Number);
+  //   // Check for null, undefined, or empty string
+  //   if (dateString != 'null' || dateString === undefined) {
+  //     // Split the input string into year, month, and day
+  //     const [year, month, day] = dateString && dateString.split('-').map(Number);
 
-      // Create and return the Date object
-      const date = new Date(year, month - 1, day);
+  //     // Create and return the Date object
+  //     const date = new Date(year, month - 1, day);
 
-      // Debug: Check the created date object
-      // console.log("Generated Date object:", date);
-      return date;
+  //     // Debug: Check the created date object
+  //     // console.log("Generated Date object:", date);
+  //     return date;
+  //   }
+
+  // }
+  const convertToDate = (dateString: string | null | undefined): Date | null | boolean => {
+    if (dateString && dateString != 'null') {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
     }
-
-  }
+    console.error('Invalid date string:', dateString);
+    return false;
+  };
   const formatTimestamps = (selection: any, type?: 'from' | 'to') => {
     console.log(selection, 'selection');
-
-    if (type === 'from') {
-      return `${format(selection.startDate, 'yyyy-MM-dd')}`
-    } else {
-      return `${format(selection.endDate, 'yyyy-MM-dd')}`
+    if (selection !== null || selection !== undefined || selection !== '') {
+      if (type === 'from') {
+        return `${format(selection.startDate, 'yyyy-MM-dd')}`
+      } else {
+        return `${format(selection.endDate, 'yyyy-MM-dd')}`
+      }
     }
+
     // return `${format(selection.startDate, 'yyyy-MM-dd')} - ${format(selection.endDate, 'yyyy-MM-dd')}`;
   };
   const handleDateChange = (ranges: any, type: 'from' | 'to') => {
@@ -187,35 +197,35 @@ const alertSettingLeaf = () => {
       setSelectedValues((prevState: SelectedValues) => ({
         ...prevState,
         id: alertMsgId,
-        user_id: selectedItem?.user_id != 'null' ? selectedItem?.user_id : '',
-        countryID: selectedItem?.country?.id != 'null' ? selectedItem?.country?.id : '',
-        country: selectedItem?.country?.id != 'null' ? JSON.stringify({ id: selectedItem?.country?.id, name: selectedItem?.country?.name }) : '',
-        memberCount: selectedItem?.member_count != 'null' ? selectedItem?.member_count : '',
-        classification: selectedItem?.classification !== 'null' ? selectedItem?.classification : '',
-        riskScore: selectedItem?.risk_score != 'null' ? selectedItem?.risk_score : '',
-        alertName: selectedItem?.name != 'null' ? selectedItem?.name : '',
-        date_range_from: selectedItem?.date_range_from != 'null' ? selectedItem?.date_range_from : '',
-        date_range_to: selectedItem?.date_range_to != 'null' ? selectedItem?.date_range_to : '',
+        user_id: selectedItem?.user_id != null ? selectedItem?.user_id : '',
+        countryID: selectedItem?.country?.id != null ? selectedItem?.country?.id : '',
+        country: selectedItem?.country?.id != null ? JSON.stringify({ id: selectedItem?.country?.id, name: selectedItem?.country?.name }) : '',
+        memberCount: selectedItem?.member_count != null ? selectedItem?.member_count : '',
+        classification: selectedItem?.classification != null ? selectedItem?.classification : '',
+        riskScore: selectedItem?.risk_score != null ? selectedItem?.risk_score : '',
+        alertName: selectedItem?.name != null ? selectedItem?.name : '',
+        date_range_from: selectedItem?.date_range_from != null ? selectedItem?.date_range_from : '',
+        date_range_to: selectedItem?.date_range_to != null ? selectedItem?.date_range_to : '',
       }));
-      let startsDate = selectedItem?.date_range_from != 'null' ? convertToDate(selectedItem?.date_range_from) : ''
-      let endsDate = selectedItem?.date_range_to != 'null' ? convertToDate(selectedItem?.date_range_to) : ''
+      let startsDate = selectedItem?.date_range_from != null ? convertToDate(selectedItem?.date_range_from) : ''
+      let endsDate = selectedItem?.date_range_to != null ? convertToDate(selectedItem?.date_range_to) : ''
 
       setFromDate([
         {
-          startDate: startsDate || '',
-          endDate: endsDate || '',
+          startDate: startsDate ? startsDate : new Date(),
+          endDate: endsDate ? endsDate : new Date(),
           key: 'selection',
         }
       ]);
       setToDate([
         {
-          startDate: startsDate || '',
-          endDate: endsDate || '',
+          startDate: startsDate ? startsDate : new Date(),
+          endDate: endsDate ? endsDate : new Date(),
           key: 'selection',
         }
       ]);
-      fromInputRef.current.value = formatTimestamps({ startDate: startsDate, endDate: endsDate }, 'from');
-      toInputRef.current.value = formatTimestamps({ startDate: startsDate, endDate: endsDate }, 'to');
+      fromInputRef.current.value = startsDate?formatTimestamps({ startDate: startsDate, endDate: endsDate }, 'from') : '';
+      toInputRef.current.value = startsDate?formatTimestamps({ startDate: startsDate, endDate: endsDate }, 'to') : '';
       setEditBtnStatus(true);
       // if (selectedItem) {
       //   setSelectedValues(selectedItem);
@@ -282,6 +292,72 @@ const alertSettingLeaf = () => {
       }
     });
   };
+
+  const handleToggleStatus = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const toggleMsgId = e.target.getAttribute("data-id");
+      if (!toggleMsgId) {
+        console.error("Toggle message ID is missing.");
+        alert("Error: Toggle message ID is missing.");
+        return;
+      }
+
+      const userId = (() => {
+        try {
+          const storedData = sessionStorage.getItem("userId");
+          return storedData ? JSON.parse(storedData).userID : null;
+        } catch (error) {
+          console.error("Error parsing user ID from sessionStorage:", error);
+          return null;
+        }
+      })();
+
+      if (!userId) {
+        console.error("User ID is not available in session storage.");
+        alert("Error: User ID is missing. Please log in again.");
+        return;
+      }
+
+      // Confirm toggle action (uncomment if needed)
+      // const isConfirmed = window.confirm("Do you want to toggle the status of this alert?");
+      // if (!isConfirmed) return;
+
+      const formData = new FormData();
+      formData.append("id", toggleMsgId);
+      formData.append("user_id", userId);
+      formData.append("status", e.target.checked ? "1" : "0");
+
+      console.log("Form Data:", Object.fromEntries(formData)); // Debugging purpose
+
+      const response = await alertSettingCallApi(
+        "user-alerts/change-status",
+        "post",
+        formData
+      );
+
+      if (response.status == "200") {
+        setSelectvalueArray((prev) =>
+          prev.map((item) =>
+            item.id === toggleMsgId
+              ? { ...item, status: e.target.checked ? "1" : "0" }
+              : item
+          )
+        );
+        console.log("Success: The alert status has been toggled.");
+        allAlertApi();
+      } else {
+        console.error("Unexpected Response Status:", response);
+        alert(response.message || "Failed to toggle alert status.");
+      }
+    } catch (err) {
+      console.error("Error toggling alert status:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      alert(errorMessage);
+    }
+  };
+
+
   const searchFilterDropdownApi = async () => {
     try {
       let response = await alertSettingCallApi('search-filterlist', 'get')
@@ -340,14 +416,17 @@ const alertSettingLeaf = () => {
                 toPickerRef={toPickerRef}
               />
             </div>
-            {
-              selectvalueArr && selectvalueArr.length > 0 && (
-                <div className="custom-alert-setting-wrapper">
-                  <div className="custom-alert-header-wrapper">
-                    <div className="custom-alert-title">
-                      <h4>Custom Alerts</h4>
-                    </div>
-                  </div>
+
+
+            <div className="custom-alert-setting-wrapper">
+              <div className="custom-alert-header-wrapper">
+                <div className="custom-alert-title">
+                  <h4>Custom Alerts</h4>
+                </div>
+              </div>
+
+              {
+                selectvalueArr && selectvalueArr.length > 0 ? (
                   <div className="custom-alert-body">
                     {
                       selectvalueArr && selectvalueArr.map((item: any, index) => {
@@ -366,19 +445,20 @@ const alertSettingLeaf = () => {
                                       <svg width={12} height={14} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.56804 12.4946C3.85814 12.8614 4.22781 13.1575 4.64912 13.3606C5.07043 13.5636 5.53236 13.6682 6.00004 13.6666C6.46772 13.6682 6.92966 13.5636 7.35097 13.3606C7.77228 13.1575 8.14194 12.8614 8.43204 12.4946C6.81807 12.713 5.18202 12.713 3.56804 12.4946ZM10.5 4.99992V5.46925C10.5 6.03259 10.66 6.58325 10.9614 7.05192L11.7 8.20059C12.374 9.24992 11.8594 10.6759 10.6867 11.0073C7.62252 11.875 4.37757 11.875 1.31337 11.0073C0.140708 10.6759 -0.373959 9.24992 0.300041 8.20059L1.03871 7.05192C1.34085 6.57938 1.50118 6.03013 1.50071 5.46925V4.99992C1.50071 2.42259 3.51537 0.333252 6.00004 0.333252C8.48471 0.333252 10.5 2.42259 10.5 4.99992Z" fill="#108DE5" />
                                       </svg>
-                                      <span className='alert-status'>Alert :</span>
-                                      <span>{selectedValues?.status}</span>
+                                      <span className="alert-status">Alert :</span>
+                                      <span>{item.status}</span>
                                       <label className={styles.toggleSwitch}>
                                         <input
                                           data-id={item.id}
                                           type="checkbox"
-                                          checked={Boolean(selectedValues?.status)}
-                                          onChange={() => setSelectedValues({ ...selectedValues, status: selectedValues?.status === '0' ? '1' : '0' })}
+                                          checked={item.status == "1"}
+                                          onChange={handleToggleStatus}
                                           className={styles.toggleInput}
                                         />
                                         <span className={styles.slider}></span>
-
-                                        <span className={styles.labelText}>{Boolean(selectedValues?.status === '1') ? "On" : "Off"}</span>
+                                        <span className={styles.labelText}>
+                                          {item.status === "1" ? "On" : "Off"}
+                                        </span>
                                       </label>
                                     </span>
                                   </div>
@@ -414,12 +494,18 @@ const alertSettingLeaf = () => {
                       })
                     }
                   </div>
-                </div>
-              )
-            }
+                )
+                  :
+                  <div className="no_record">
+                    <p>No Record Found</p>
+                  </div>
+              }
+
+            </div>
+
           </div>
         </div>
-      </div>
+      </div >
     </>
   )
 }

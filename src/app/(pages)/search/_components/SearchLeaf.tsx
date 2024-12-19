@@ -1102,7 +1102,8 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
 
           setDetailInformationObject({ ...response?.data, type: 'group', activity_graph_data: graph_data, activity_graph_option: activity_graph_option })
 
-
+          const randomDeleteData = getRandomData()
+          setDeletedData(randomDeleteData)
 
         }
         else {
@@ -1407,7 +1408,7 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
     // await searchFilterApi()
   };
   function getRandomData() {
-    const max = 6; // Range is 0 to 5 inclusive
+    const max = 100; // Range is 0 to 5 inclusive
     const dataCount = Math.floor(Math.random() * max); // Randomly choose how many values to return (0 to 5)
     const dataSet = new Set();
 
@@ -1433,8 +1434,8 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
   }, [sortingValue]);
   // }
   // console.log((Object.values(sortingValue).every(value => value === '')), 'dropdownValues');
-  console.log(deletedData.includes(7), 'deletedData');
-  
+  // console.log(deletedData.includes(7), 'deletedData');
+
   // searchFilterApi()
   return (
     <>
@@ -1628,6 +1629,9 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
                     </div>
                   </div>
                   <div className="Sorting-dropdown">
+                    <div className="sorting-dropdown-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="19px" height="19px" viewBox="0 0 24 24"><path fill="none" stroke="#108DE5" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 10h7m-7 4h5m-5 4h3M11 6h10M7 18.813C6.607 19.255 5.56 21 5 21m-2-2.187C3.393 19.255 4.44 21 5 21m0 0v-6M3 5.188C3.393 4.745 4.44 3 5 3m2 2.188C6.607 4.745 5.56 3 5 3m0 0v6" color="#108DE5"></path></svg>
+                    </div>
                     <ThemeProvider theme={theme}>
                       <CssBaseline />
                       <StyledFormControl sx={{ m: 1, minWidth: 200 }} variant="outlined">
@@ -1639,7 +1643,7 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
                         >
                           {/* Placeholder */}
                           <MenuItem value="">
-                            <span>Sorting</span>
+                            <span>Advanced Sorting</span>
                           </MenuItem>
 
                           {/* Common Filters */}
@@ -2614,7 +2618,7 @@ const SearchLeaf = ({ params }: { params: { id: string; type: string } }) => {
                         setShowMoreMemberOffsetCount={setShowMoreMemberOffsetCount}
                         groupMembers={detailPageMembers}
                         setGroupMembers={setDetailPageMembers}
-
+                        deletedData={deletedData}
 
 
                       />

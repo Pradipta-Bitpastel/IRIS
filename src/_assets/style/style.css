@@ -5695,6 +5695,7 @@ section.loader {
 
 .translator-btn {
   z-index: 999999999999;
+  position: relative;
 }
 
 .translator-btn span {
@@ -5787,35 +5788,143 @@ section.loader {
 .swal2-html-container {
   color: #fff !important;
 }
+
 /* Target disabled Select */
 .MuiSelect-root.Mui-disabled {
-  color: #A0A0A0 !important; /* Custom disabled text color */
-  background-color: #F9F9F9 !important; /* Optional: Custom disabled background */
+  color: #A0A0A0 !important;
+  /* Custom disabled text color */
+  background-color: #F9F9F9 !important;
+  /* Optional: Custom disabled background */
 }
 
 /* Target disabled MenuItems */
-.MuiSelect-select, .MuiSelect-icon {
-  color: #108DE5 !important; /* Custom MenuItem color */
-  -webkit-text-fill-color:#108DE5 !important;
-  
+.MuiSelect-select,
+.MuiSelect-icon {
+  color: #108DE5 !important;
+  /* Custom MenuItem color */
+  -webkit-text-fill-color: #108DE5 !important;
+
 }
-.MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input{
+
+.MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input {
   padding: 0 !important;
   cursor: pointer;
   font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
 }
-.MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input span{
+
+.MuiSelect-select.MuiSelect-outlined.MuiInputBase-input.MuiOutlinedInput-input span {
   font-size: 12px;
   font-family: poppins, sans-serif;
   font-weight: 700;
 }
-.search_group_details_inner_card.relative_pos.deleted{
-  opacity: .4;
-  pointer-events: none;
+
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_image,
+.additional_messege_content.relative_pos.deleted {
+  /* : #03090D  !important; */
+  position: relative;
+  opacity: 0.4;
+  z-index: 1;
+  /* pointer-events: none; */
 }
-.search_group_details_inner_card.relative_pos.deleted .translator-btn{
-  display: none;
+
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content {
+  background: #0f1518 !important;
+  border: 1px solid rgba(255, 255, 255, 0.058) !important;
 }
-.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content p{
-  text-decoration: line-through !important;
+
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content p {
+  opacity: .2;
+}
+
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content span {
+  opacity: .5;
+}
+
+.search_result_inner .search_group_details .search_group_details_main_card_body .search_group_details_inner_card.deleted:hover .search_group_details_inner_card_content,
+.search_result_inner .search_message_group_details .search_group_details_main_card .search_group_details_main_card_body .search_group_details_inner_card.deleted:hover .search_group_details_inner_card_content
+{
+  border: 1px solid rgba(255, 255, 255, 0.084) !important;
+  background: #0f1518 !important;
+  box-shadow: none !important;
+}
+.search_result_inner .search_group_details .search_group_details_main_card_body .search_group_details_inner_card.deleted:hover .search_group_details_inner_card_content:before,
+.search_result_inner .search_message_group_details .search_group_details_main_card .search_group_details_main_card_body .search_group_details_inner_card.deleted:hover .search_group_details_inner_card_content:before,
+.search_result_inner .search_group_details .search_group_details_main_card_body .search_group_details_inner_card.deleted .search_group_details_inner_card_content:before,
+.search_result_inner .search_message_group_details .search_group_details_main_card .search_group_details_main_card_body .search_group_details_inner_card.deleted .search_group_details_inner_card_content:before
+{
+  background: #0f1518 !important;
+  box-shadow: none !important;
+}
+.search_group_details_inner_card.relative_pos.deleted .translator-btn {
+  z-index: 99999999999 !important;
+}
+
+.search_group_details_inner_card.relative_pos.deleted .search_group_details_inner_card_content p,
+.additional_messege_content.relative_pos.deleted p {
+  /* text-decoration: line-through !important; */
+}
+
+/* 18.12.24 Biswjit*/
+@media only screen and (min-width:991px) and (max-width:1199px) {
+  .custom-alert-name-content .custom-lg-9 {
+    flex: 0 0 auto;
+    width: 65%;
+  }
+
+  .custom-alert-name-content .custom-lg-3 {
+    flex: 0 0 auto;
+    width: 35%;
+  }
+}
+
+@media only screen and (max-width:992px) {
+  .fromtoInput {
+    margin-bottom: 10px;
+  }
+}
+
+@media only screen and (max-width:767px) {
+  .alert-setting-page-wrapper .alert-setting-form-wrapper #searchFilterSubmit {
+    margin-top: 5px !important;
+  }
+
+}
+
+.search_result_inner .Sorting-dropdown .MuiFormControl-root {
+  min-width: 170px !important;
+  /* / max-width: 170px !important; / */
+  margin: 0;
+  /* / width: 100% !important; / */
+}
+
+.search_result_inner .Sorting-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  margin-top: 5px;
+}
+
+.css-6r42io-MuiSvgIcon-root-MuiSelect-icon {
+  top: calc(53% - .5em) !important;
+}
+
+.Sorting-dropdown .MuiSelect-select {
+  margin-top: 4px;
+}
+
+.no_record p {
+  text-align: center;
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 400;
+  color: #8E9DAD;
+  margin-top: 16px;
+}
+.search_result_inner .Sorting-dropdown .sorting-dropdown-icon{
+  left: 30px;
+  position: relative;
 }

@@ -45,7 +45,7 @@ import { translateData } from "../types/type";
 type TProps = {
   messageDetails: Record<string, any>;
   search_str: string;
-  deletedData:any;
+  deletedData: any;
   postSearchByKeyApiRequest: (
     data: Record<string, any>,
     endpoint: string,
@@ -193,7 +193,9 @@ id={`group-${item?.id}`} */}
             <div className="search_group_details_main_card_body">
               {messageDetails?.prevAndNextMsgWithCurrent.map((item, index) => {
                 return (
-                  <div key={index} className={`search_group_details_inner_card relative_pos ${deletedData.includes(index) ? 'deleted' : ''}`}>
+                  <div key={index} className={`search_group_details_inner_card relative_pos 
+                    ${item?.message_text.trim().toLowerCase() !== messageDetails?.message_text.trim().toLowerCase() && deletedData.includes(index) ? 'deleted' : ''}`}
+                    >
                     <div className="search_result_people_overlay" onClick={goToDetailsPage} id={`message-${item.id}`}></div>
                     <div className="search_group_details_inner_card_image profile_img_parent details-clickable-img-zIndex">
                       <img
@@ -218,44 +220,49 @@ id={`group-${item?.id}`} */}
                         {" "}
                         {item?.message_text}{" "}
                       </p>
-
-                      <div className="d-flex justify-content-between">
-                        {
-                          item?.language && item?.language === "ar" &&
-                          (
-                            <div className="translator-btn">
-                              <span
-                                onClick={() => { ArabicTranslation(item?.message_text, item?.id) }}
-                                className={translateData.some(translation => translation.messageId === item?.id && translation.status) ? "active" : ""}
-                              >
-                                {/* {
-                                // Check if translation exists for the specific messageId and its status
-                                translateData.some(translation => translation.messageId === item?.id && translation.status)
-                                  ? "Translated by Google"
-                                  : 'Translate Message'
-                              } */}
-                                Translate
-                              </span>
-                            </div>
-                          )
-                        }
-
+                      <div className="d-flex justify-content-between ">
+                        <div className="">
+                          {
+                            (item?.message_text.trim().toLowerCase() == messageDetails?.message_text.trim().toLowerCase() &&
+                              messageDetails?.language == 'ar' || 'fa') || (item?.language && item?.language === "ar" || 'fa') ?
+                              <div className="translator-btn">
+                                <span
+                                  onClick={() => { ArabicTranslation(item?.message_text, item?.id) }}
+                                  className={translateData.some(translation => translation.messageId === item?.id && translation.status) ? "active" : ""}
+                                >
+                                  Translate
+                                </span>
+                              </div>
+                              : ''
+                          }
+                        </div>
                         <span className="d-flex align-items-center">
-                          {dateFormatter(item?.timestamp)} |{" "}
-                          {dateFormatter(item?.timestamp, true)}
+                          {
+                            item?.message_text.trim().toLowerCase() == messageDetails?.message_text.trim().toLowerCase() ?
+                              <>
+                                {dateFormatter(messageDetails?.timestamp)} | {dateFormatter(messageDetails?.timestamp, true)}
+                              </>
+                              :
+                              <>
+                                {dateFormatter(item?.timestamp)} | {dateFormatter(item?.timestamp, true)}
+                              </>
+                          }
+
                         </span>
                       </div>
 
-                      <div className="translated-msg-section" id="translateSec">
-                        {
-                          // Display translated message only if translation exists and status is true for that messageId
-                          translateData.filter(translation => translation.messageId === item?.id && translation.status).map(translation => (
+
+                      {
+                        // Display translated message only if translation exists and status is true for that messageId
+                        translateData.filter(translation => translation.messageId === item?.id && translation.status).map(translation => (
+                          <div className="translated-msg-section" id="translateSec">
                             <p key={translation.messageId}>
                               {translation.message}
                             </p>
-                          ))
-                        }
-                      </div>
+                          </div>
+                        ))
+                      }
+
 
                     </div>
                   </div>
@@ -278,7 +285,7 @@ id={`group-${item?.id}`} */}
                           return (
                             <div
                               key={index}
-                              className=" additional_messege_content  relative_pos"
+                              className={`additional_messege_content  relative_pos ${deletedData.includes(index) ? 'deleted' : ''}`}
                             >
                               <div
                                 className="search_result_people_overlay"

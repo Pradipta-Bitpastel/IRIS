@@ -44,7 +44,7 @@ import 'photoswipe/dist/photoswipe.css'
 
 
 import "react-toastify/dist/ReactToastify.css";
-import { getMediaType, activityGraphDataBuilder } from '../helpers';
+import { getMediaType, activityGraphDataBuilder, handleTranslation, translateText } from '../helpers';
 
 import {
   Chart as ChartJS,
@@ -60,6 +60,7 @@ import { Line } from 'react-chartjs-2';
 import Loading from '@/app/loading';
 import { off } from 'process';
 import { count } from 'console';
+import { translateData } from '../types/type';
 //   import faker from 'faker';
 
 ChartJS.register(
@@ -98,10 +99,10 @@ type TProps = {
   setShowMoreMessageOffsetCount: React.Dispatch<React.SetStateAction<number>>
   setShowMoreMediaOffsetCount: React.Dispatch<React.SetStateAction<number>>
   setShowMoreMemberOffsetCount: React.Dispatch<React.SetStateAction<number>>
-
+  deletedData:any
 }
 
-const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, setGroupMessages, groupMessages, setGroupMedias, groupMedias, groupMembers, setGroupMembers, openLightBox, goToDetailsPage, setActiveTab,
+const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, setGroupMessages, groupMessages, setGroupMedias, groupMedias, groupMembers, setGroupMembers, openLightBox, goToDetailsPage, setActiveTab,deletedData,
   activeTab,
   handleTabClick, detailSectionTabLoader,
   setDetailSectionTabLoader,
@@ -115,6 +116,7 @@ const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, 
 }: TProps) => {
 
   const [membersApi, setMembersApi] = useState([])
+  const [translateData, setTranslateData] = useState<Array<translateData>>([]);
   // const[groupsApi,setGroupsApi]=useState([])
   // const [groupMembers,setGroupMembers]=useState<Record<string, any>>({
   //   count:'0',
@@ -582,12 +584,54 @@ const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, 
       });
     }
   };
+  const ArabicTranslation = async (message: string, messageId: string) => {
+    // Check if the message has already been translated
+    const existingTranslation = translateData.find(item => item.messageId === messageId);
 
+    if (existingTranslation && existingTranslation.status) {
+      // If already translated, clear the translation (remove the object from the array)
+      setTranslateData(prevData =>
+        prevData.filter(item => item.messageId !== messageId)
+      );
+    } else {
+      // If not translated yet, proceed with translation
+      let typeOfMsg = await handleTranslation(message, messageId) as string;
+
+      if (typeOfMsg === "Arabic" && typeOfMsg !== undefined) {
+        let response = await translateText(message, messageId) as string;
+        setTranslateData(prevData => [
+          ...prevData,
+          { messageId, message: response, status: true }
+        ]);
+      } else {
+        // If translation failed, add a status as false for this messageId
+        setTranslateData(prevData => [
+          ...prevData,
+          { messageId, message: '', status: false }
+        ]);
+      }
+
+      // if (translateMsg !== undefined) {
+      //   // Add the new translation object to the array
+      //   setTranslateData(prevData => [
+      //     ...prevData,
+      //     { messageId, message: translateMsg, status: true }
+      //   ]);
+      // } else {
+      //   // If translation failed, add a status as false for this messageId
+      //   setTranslateData(prevData => [
+      //     ...prevData,
+      //     { messageId, message: '', status: false }
+      //   ]);
+      // }
+    }
+  };
   useEffect(() => {
-    if (groupMembers?.result.length > 0 || groupMessages?.result.length > 0 || groupMedias?.length > 0) {
+    if (groupMembers?.result.length > 0 || groupMessages?.result.length > 0 || groupMedias?.length > 0 ) {
       Object.values(targetDivRefs.current).forEach(scrollToBottom);
     }
-  }, [callMemberApi, callMediasApi, callMessagesApi]);
+  }, [groupMembers, groupMessages, groupMedias]);
+  console.log(groupMessages, "groupMessages");
 
 
   return (
@@ -717,7 +761,7 @@ const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, 
                               return (
                                 <div
                                   key={index}
-                                  className="search_group_details_inner_card relative_pos"
+                                  className={`search_group_details_inner_card relative_pos ${deletedData.includes(index) ? 'deleted' : ''}`}
 
 
                                 >
@@ -750,6 +794,41 @@ const GroupDetailView = ({ groupDetails, search_str, postSearchByKeyApiRequest, 
                                         {dateFormatter(item?.timestamp, true)}
                                       </span>
                                     </div>
+                                    <div className="">
+                                      {/* {
+                                        (item?.message_text.trim().toLowerCase() == groupMessages?.message_text.trim().toLowerCase() &&
+                                          groupMessages?.language == 'ar' || 'fa') || (item?.language && item?.language === "ar" || 'fa') ?
+                                          <div className="translator-btn">
+                                            <span
+                                              onClick={() => { ArabicTranslation(item?.message_text, item?.id) }}
+                                              className={translateData.some(translation => translation.messageId === item?.id && translation.status) ? "active" : ""}
+                                            >
+                                              Translate
+                                            </span>
+                                          </div>
+                                          : ''
+                                      } */}
+                                      {
+                                        <div className="translator-btn">
+                                          <span
+                                            onClick={() => { ArabicTranslation(item?.message_text, item?.id) }}
+                                            className={translateData.some(translation => translation.messageId === item?.id && translation.status) ? "active" : ""}
+                                          >
+                                            Translate
+                                          </span>
+                                        </div>
+                                      }
+                                    </div>
+                                    {
+                                      // Display translated message only if translation exists and status is true for that messageId
+                                      translateData.filter(translation => translation.messageId === item?.id && translation.status).map(translation => (
+                                        <div className="translated-msg-section" id="translateSec">
+                                          <p key={translation.messageId}>
+                                            {translation.message}
+                                          </p>
+                                        </div>
+                                      ))
+                                    }
                                   </div>
                                 </div>
                               );
