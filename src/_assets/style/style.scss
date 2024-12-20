@@ -1,0 +1,325 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;500;600;700;800;900&display=swap');
+
+/*--------------------------------------------------------
+                    UNIVERSAL STYLING
+---------------------------------------------------------*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+$primaryColor: #03090D;
+$primary_2Color: #0D1317;
+$primary_3Color: #8E9DAD;
+$primary_bodyColor_1: #108DE5;
+$primary_bodyColor_2: #EDB03B;
+$primary_bodyColor_3: #F64549;
+$primary_bodyColor_4: #08B150;
+$primary_bodyColor_5: #7DC9FF;
+$primary_bodyColor_6: #22D5E0;
+
+h2 {
+    font-family: Poppins;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+p {
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+label {
+    font-family: Poppins;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+a {
+    color: #108DE5;
+    font-family: Poppins;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-decoration: none;
+}
+
+input:focus {
+    box-shadow: none !important;
+}
+
+/*--------------------------------------------------------
+                   LOGIN PAGE STYLING
+---------------------------------------------------------*/
+.login_sec {
+    .login_sec_bg {
+        background: #03090D;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+
+        .login_shape {
+            position: absolute;
+            content: "";
+            top: -18%;
+            left: -7%;
+            width: 400px;
+            height: 400px;
+            flex-shrink: 0;
+            border-radius: 400px;
+            background: radial-gradient(50% 50% at 50% 50%, rgba(16, 141, 229, 0.12) 0%, rgba(16, 141, 229, 0) 100%);
+        }
+
+        .login_card {
+            // max-width: 440px;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+
+            .login_card_img {
+                img {
+                    max-width: 200px;
+                    width: 100%;
+                    height: 88px;
+                }
+
+                margin-bottom: 30px;
+            }
+
+            .login_card_content {
+
+
+                &:before {
+                    position: absolute;
+                    content: '';
+                    width: 800px;
+                    height: 800px;
+                    flex-shrink: 0;
+                    border-radius: 800px;
+                    // background: #000;
+                    background: radial-gradient(50% 50% at 50% 50%, rgba(16, 141, 229, 0.12) 0%, rgba(16, 141, 229, 0.00) 100%);
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .login_card_form {
+                border-radius: 16px;
+                border: 1px solid rgba(142, 157, 173, 0.20);
+                padding: 7px;
+                position: relative;
+
+                .login_card_form_content {
+                    max-width: 460px;
+                    min-width: 460px;
+                    width: 100%;
+                    height: 100%;
+                    margin: auto;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.12);
+                    box-shadow: 4px 4px 8px 4px rgba(3, 9, 13, 0.40);
+                    padding: 20px;
+
+                    @media (max-width:767px) {
+                        max-width: 350px;
+                        min-width: 350px;
+                    }
+                }
+
+                .login_card_form_title {
+                    h2 {
+                        color: #FFFFFF;
+                        margin-bottom: 10px;
+                    }
+
+                    p {
+                        color: #FFFFFF;
+                    }
+                }
+
+                .input_username {
+                    margin-top: 20px;
+                }
+
+                .input_password {
+                    margin-top: 30px;
+                }
+
+                .input_username,
+                .input_password {
+                    position: relative;
+
+                    input {
+                        background: transparent;
+                        border-radius: 20px;
+                        border: 1px solid #8E9DAD;
+                        height: 40px;
+                        padding-left: 35px;
+                        color: #fff;
+                        font-size: 12px;
+
+                        // margin-top: 30px;
+                        &::placeholder {
+                            color: #FFF;
+                            font-family: Poppins;
+                            font-size: 12px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                        }
+                    }
+                    .preview_icon{
+                        position: absolute;
+                        right: 10px;
+                        top: 12px;
+                        cursor: pointer;
+                    }
+                    .login_input_icons {
+                        position: absolute;
+                        top: 10px;
+                        left: 10px;
+                    }
+                }
+
+                .input_username input:focus,
+                .input_password input:focus {
+                    border: 1px solid #22D5E0;
+                }
+
+                .form_checkbox {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 25px;
+                    align-items: center;
+
+                    input {
+                        background-color: transparent;
+                        width: 16px;
+                        height: 16px;
+                        flex-shrink: 0;
+                        border-radius: 4px;
+                        border: 1px solid #8E9DAD;
+                    }
+
+                    label {
+                        color: #8E9DAD;
+                    }
+
+                }
+
+                .login_form_btn {
+                    border-radius: 20px;
+                    background: #108DE5;
+                    box-shadow: 0px 0px 20px 0px rgba(125, 201, 255, 0.20);
+                    border: 0;
+                    color: #fff;
+                    width: 100%;
+                    height: 40px;
+                    margin-top: 10px;
+                    font-size: 14px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    transition: all .2s linear;
+
+                    &:hover {
+                        background: #0e7cca;
+                    }
+
+                    .progress-bar {
+                        height: 40px;
+                        width: 100%;
+                        background-color: #BFADA3;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        box-shadow: 2px 0 10px inset rgba(0, 0, 0, 0.2);
+                        position: relative;
+                        display: none;
+
+                        .perc {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 40px;
+                        }
+                    }
+
+                    .bars {
+                        width: 0;
+                        height: 100%;
+                        background-color: $primary_bodyColor_1;
+
+                        /*Lollipop background gradient*/
+                        background-image: linear-gradient(-45deg,
+                                rgba(255, 255, 255, .2) 25%,
+                                transparent 25%,
+                                transparent 50%,
+                                rgba(255, 255, 255, .2) 50%,
+                                rgba(255, 255, 255, .2) 75%,
+                                transparent 75%,
+                                transparent);
+
+                        background-size: 30px 30px;
+                        animation: move 2s linear;
+                        box-shadow: 2px 0 10px inset rgba(0, 0, 0, 0.2);
+                        transition: width 2s ease-out;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+/*Lollipop background gradient animation*/
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 30px 30px;
+    }
+}
+
+.shake {
+    animation: shake 150ms 2 linear;
+    -moz-animation: shake 150ms 2 linear;
+    -webkit-animation: shake 150ms 2 linear;
+    -o-animation: shake 150ms 2 linear;
+}
+
+@keyframes shake {
+    0% {
+        transform: translate(10px, 0);
+    }
+
+    50% {
+        transform: translate(-10px, 0);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}

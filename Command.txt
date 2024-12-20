@@ -1,0 +1,9 @@
+ssh -i "IRIS-FRONTEND-AZURE.pem" azureuser@20.217.222.167
+
+cd iris-frontend-prod
+
+pm2 delete  iris-frontend
+
+pm2 start npm --name iris-frontend -- run dev -- -p 3000
+
+pm2 log
