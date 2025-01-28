@@ -417,11 +417,11 @@ interface Option {
 }
 
 export const filterriskScores: Option[] = [
-  { range: 'Less than 20%', value: '<20%' },
-  { range: 'Less than 40%', value: '<40%' },
-  { range: 'Less than 60%', value: '<60%' },
-  { range: 'Less than 80%', value: '<80%' },
-  { range: 'Less than 100%', value: '<100%' },
+  { range: '1', value: '1' },
+  { range: '2', value: '2' },
+  { range: '3', value: '3' },
+  { range: '4', value: '4' },
+  { range: '5', value: '5' },
   // { range: 'Above 100%', value: 1000 }
 ];
 export const filtermemberCounts = [

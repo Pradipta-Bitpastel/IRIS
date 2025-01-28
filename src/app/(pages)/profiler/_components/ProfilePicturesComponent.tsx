@@ -33,13 +33,12 @@ const ProfilePicturesComponent = ({ images }) => {
         asNavFor: mainSlider,
         ref: thumbSliderRef,
         slidesToShow: 4,
-        swipeToSlide: true,
+        swipeToSlide: false,
         focusOnSelect: true,
-        centerMode: true,
+        // centerMode: true,
         // centerPadding: "10px",
         arrows: false,
         infinite: false,
-
     };
     const openLightbox = (e) => {
         let id = e.target.id
@@ -56,7 +55,7 @@ const ProfilePicturesComponent = ({ images }) => {
     return (
         <>
             {
-                images.length === 0 ? (
+                images && images?.length === 0 ? (
                     <>
                         <div className="profile-pictures-slick-container d-flex align-items-center justify-content-center" style={{ height: "510px" }}>
                             <div className="profiler-slick-main ">

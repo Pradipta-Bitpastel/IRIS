@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect, use } from 'react'
 import Loading from '@/app/loading';
 import ProfilerMapComponent from './ProfilerMapComponent';
 import ProfilePicturesComponent from './ProfilePicturesComponent';
-import { profilerData } from "@/_assets/datasets/db";
+// import { profilerData } from "@/_assets/datasets/db";
 const ProfilePage = (({ profilerData }) => {
 
     const [loaderStatus, setLoaderStatus] = useState(false);
@@ -44,24 +44,61 @@ const ProfilePage = (({ profilerData }) => {
 
         for (let key in obj) {
             if (obj.hasOwnProperty(key)) {
-                // If the value is an object, wrap it inside the key's object
+                // Wrap the value inside an object
                 result.push({ [key]: obj[key] });
             }
         }
 
+        // Sort the array
+        result.sort((a, b) => {
+            const objA = Object.values(a)[0];
+            const objB = Object.values(b)[0];
+
+            // Check if the values are objects, if not they go to the end
+            const isObjA = typeof objA === "object" && objA !== null;
+            const isObjB = typeof objB === "object" && objB !== null;
+
+            if (!isObjA && !isObjB) {
+                return 0; // Both are non-objects, maintain original order
+            }
+            if (!isObjA) return 1; // Non-object `objA` goes after `objB`
+            if (!isObjB) return -1; // Non-object `objB` goes after `objA`
+
+            // Primary condition: Sort by the number of keys (descending)
+            const sizeA = Object.keys(objA).length;
+            const sizeB = Object.keys(objB).length;
+
+            if (sizeB !== sizeA) {
+                return sizeB - sizeA;
+            }
+
+            // Secondary condition: Count null or boolean values
+            const countSpecialValues = (obj) => {
+                return Object.values(obj).filter(value => value === null || typeof value === "boolean").length;
+            };
+
+            const specialCountA = countSpecialValues(objA);
+            const specialCountB = countSpecialValues(objB);
+
+            return specialCountA - specialCountB; // Lesser special values come first
+        });
+
         return result;
     };
 
-    React.useEffect(() => {
-        const transformedData = transformJsonToArray(profilerData?.social_data);
-        setSociaData(transformedData);
+
+    useEffect(() => {
+
         document.addEventListener('click', handleClickOutside);
         return () => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
-
-    // console.log(sociaData[0]);
+    useEffect(() => {
+        const transformedData = transformJsonToArray(profilerData?.social_data);
+        setSociaData(transformedData);
+    }, [profilerData])
+    // console.log(sociaData);
 
     return (
         <>
@@ -74,12 +111,12 @@ const ProfilePage = (({ profilerData }) => {
                     <div className="profilerpage_main_wrapper">
                         <div className="profilepage-uppercontent">
                             <div className="row gx-2">
-                                <div className="col-lg-4">
+                                <div className="col-lg-4 col-md-6">
                                     <div className="profile-pictures">
                                         <ProfilePicturesComponent images={profilerData?.profile_image_url} />
                                     </div>
                                 </div>
-                                <div className="col-lg-8" style={{ overflow: 'hidden' }}>
+                                <div className="col-lg-8 col-md-6" style={{ overflow: 'hidden' }}>
                                     <ProfilerMapComponent profileData={profilerData?.country} />
                                 </div>
                             </div>
@@ -90,16 +127,16 @@ const ProfilePage = (({ profilerData }) => {
                                     <div className="profile-information-area">
                                         <div className="profile-information-area-header">
                                             <h4>Basic Information</h4>
-                                            <span className='information-three-dot'>
+                                            {/* <span className='information-three-dot'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
                                                     <path d="M11.7002 19.8252C11.7002 19.3942 11.8714 18.9809 12.1761 18.6761C12.4809 18.3714 12.8942 18.2002 13.3252 18.2002C13.7562 18.2002 14.1695 18.3714 14.4742 18.6761C14.779 18.9809 14.9502 19.3942 14.9502 19.8252C14.9502 20.2562 14.779 20.6695 14.4742 20.9742C14.1695 21.279 13.7562 21.4502 13.3252 21.4502C12.8942 21.4502 12.4809 21.279 12.1761 20.9742C11.8714 20.6695 11.7002 20.2562 11.7002 19.8252ZM11.7002 13.3252C11.7002 12.8942 11.8714 12.4809 12.1761 12.1761C12.4809 11.8714 12.8942 11.7002 13.3252 11.7002C13.7562 11.7002 14.1695 11.8714 14.4742 12.1761C14.779 12.4809 14.9502 12.8942 14.9502 13.3252C14.9502 13.7562 14.779 14.1695 14.4742 14.4742C14.1695 14.779 13.7562 14.9502 13.3252 14.9502C12.8942 14.9502 12.4809 14.779 12.1761 14.4742C11.8714 14.1695 11.7002 13.7562 11.7002 13.3252ZM11.7002 6.8252C11.7002 6.39422 11.8714 5.98089 12.1761 5.67615C12.4809 5.3714 12.8942 5.2002 13.3252 5.2002C13.7562 5.2002 14.1695 5.3714 14.4742 5.67615C14.779 5.98089 14.9502 6.39422 14.9502 6.8252C14.9502 7.25617 14.779 7.6695 14.4742 7.97424C14.1695 8.27899 13.7562 8.4502 13.3252 8.4502C12.8942 8.4502 12.4809 8.27899 12.1761 7.97424C11.8714 7.6695 11.7002 7.25617 11.7002 6.8252Z" fill="#108DE5" />
                                                 </svg>
-                                            </span>
+                                            </span> */}
                                         </div>
                                         <div className="profile-information-area-content">
                                             <div className='profile-information-area-content-item'>
                                                 <span>Name</span>
-                                                <span><p>{profilerData?.first_name ? profilerData?.surname + " " + profilerData?.first_name : '-'}</p></span>
+                                                <span><p>{profilerData?.surname ? profilerData?.surname : ''} {profilerData?.first_name ? profilerData?.first_name : ''}</p></span>
                                             </div>
                                             <div className='profile-information-area-content-item'>
                                                 <span>Date Of Birth</span>
@@ -154,11 +191,11 @@ const ProfilePage = (({ profilerData }) => {
                                     <div className='social-media-area'>
                                         <div className="profile-information-area-header">
                                             <h4>Social Media</h4>
-                                            <span className='information-three-dot'>
+                                            {/* <span className='information-three-dot'>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
                                                     <path d="M11.7002 19.8252C11.7002 19.3942 11.8714 18.9809 12.1761 18.6761C12.4809 18.3714 12.8942 18.2002 13.3252 18.2002C13.7562 18.2002 14.1695 18.3714 14.4742 18.6761C14.779 18.9809 14.9502 19.3942 14.9502 19.8252C14.9502 20.2562 14.779 20.6695 14.4742 20.9742C14.1695 21.279 13.7562 21.4502 13.3252 21.4502C12.8942 21.4502 12.4809 21.279 12.1761 20.9742C11.8714 20.6695 11.7002 20.2562 11.7002 19.8252ZM11.7002 13.3252C11.7002 12.8942 11.8714 12.4809 12.1761 12.1761C12.4809 11.8714 12.8942 11.7002 13.3252 11.7002C13.7562 11.7002 14.1695 11.8714 14.4742 12.1761C14.779 12.4809 14.9502 12.8942 14.9502 13.3252C14.9502 13.7562 14.779 14.1695 14.4742 14.4742C14.1695 14.779 13.7562 14.9502 13.3252 14.9502C12.8942 14.9502 12.4809 14.779 12.1761 14.4742C11.8714 14.1695 11.7002 13.7562 11.7002 13.3252ZM11.7002 6.8252C11.7002 6.39422 11.8714 5.98089 12.1761 5.67615C12.4809 5.3714 12.8942 5.2002 13.3252 5.2002C13.7562 5.2002 14.1695 5.3714 14.4742 5.67615C14.779 5.98089 14.9502 6.39422 14.9502 6.8252C14.9502 7.25617 14.779 7.6695 14.4742 7.97424C14.1695 8.27899 13.7562 8.4502 13.3252 8.4502C12.8942 8.4502 12.4809 8.27899 12.1761 7.97424C11.8714 7.6695 11.7002 7.25617 11.7002 6.8252Z" fill="#108DE5" />
                                                 </svg>
-                                            </span>
+                                            </span> */}
                                         </div>
                                         <div className='social-media-content'>
                                             <div className="social-media-content-wrapper">
@@ -169,134 +206,19 @@ const ProfilePage = (({ profilerData }) => {
 
                                                                 <>
                                                                     {
-                                                                        sociaData[index].hiya && (
-                                                                            <div className="col-lg-3">
-                                                                                <div className='social-content-item-main'>
-                                                                                    <div className='social-meadia-content-item'>
-                                                                                        <span className="social-tag-main">
-                                                                                            <span className='social-tag-icon'>
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                                                                                    <g clipPath="url(#clip0_4653_207)">
-                                                                                                        <path d="M15.4927 0.641602H1.50887C1.02989 0.641602 0.641602 1.02989 0.641602 1.50887V15.4927C0.641602 15.9717 1.02989 16.36 1.50887 16.36H15.4927C15.9717 16.36 16.36 15.9717 16.36 15.4927V1.50887C16.36 1.02989 15.9717 0.641602 15.4927 0.641602Z" fill="#3D5A98" />
-                                                                                                        <path d="M11.4853 16.3585V10.2717H13.528L13.8334 7.89971H11.4853V6.38565C11.4853 5.69901 11.6766 5.23018 12.6607 5.23018H13.9171V3.10518C13.3087 3.04189 12.6973 3.01174 12.0856 3.01487C10.2767 3.01487 9.03094 4.11721 9.03094 6.15057V7.89971H6.98828V10.2717H9.03094V16.3585H11.4853Z" fill="white" />
-                                                                                                    </g>
-                                                                                                    <defs>
-                                                                                                        <clipPath id="clip0_4653_207">
-                                                                                                            <rect width="17" height="17" fill="white" />
-                                                                                                        </clipPath>
-                                                                                                    </defs>
-                                                                                                </svg>
-                                                                                            </span>
-                                                                                            Facebook
-                                                                                        </span>
-                                                                                    </div>
-
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Name :</span>
-                                                                                        <p>{item?.hiya?.name != null ? item?.hiya?.name : '-'}</p>
-                                                                                    </div>
-
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Type :</span>
-                                                                                        <p>{item?.hiya?.type != null ? item?.hiya?.type : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Spam :</span>
-                                                                                        <p>{item?.hiya?.is_spam != null ? item?.hiya?.is_spam : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Category :</span>
-                                                                                        <p>{item?.hiya?.category != null ? item?.hiya?.category : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Reputation :</span>
-                                                                                        <p>{item?.hiya?.reputation != null ? item?.hiya?.reputation : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Spam Score :</span>
-                                                                                        <p>{item?.hiya?.spam_score != null ? item?.hiya?.spam_score : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Reputation Score :</span>
-                                                                                        <p>{item?.hiya?.reputation_score != null ? item?.hiya?.reputation_score : '-'}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        )
-                                                                    }
-                                                                    {
-                                                                        sociaData[index].callerapi && (
-                                                                            <div className="col-lg-3">
-                                                                                <div className='social-content-item-main'>
-                                                                                    <div className='social-meadia-content-item'>
-                                                                                        <span className="social-tag-main">
-                                                                                            <span className='social-tag-icon'>
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                                                                                    <g clipPath="url(#clip0_4653_207)">
-                                                                                                        <path d="M15.4927 0.641602H1.50887C1.02989 0.641602 0.641602 1.02989 0.641602 1.50887V15.4927C0.641602 15.9717 1.02989 16.36 1.50887 16.36H15.4927C15.9717 16.36 16.36 15.9717 16.36 15.4927V1.50887C16.36 1.02989 15.9717 0.641602 15.4927 0.641602Z" fill="#3D5A98" />
-                                                                                                        <path d="M11.4853 16.3585V10.2717H13.528L13.8334 7.89971H11.4853V6.38565C11.4853 5.69901 11.6766 5.23018 12.6607 5.23018H13.9171V3.10518C13.3087 3.04189 12.6973 3.01174 12.0856 3.01487C10.2767 3.01487 9.03094 4.11721 9.03094 6.15057V7.89971H6.98828V10.2717H9.03094V16.3585H11.4853Z" fill="white" />
-                                                                                                    </g>
-                                                                                                    <defs>
-                                                                                                        <clipPath id="clip0_4653_207">
-                                                                                                            <rect width="17" height="17" fill="white" />
-                                                                                                        </clipPath>
-                                                                                                    </defs>
-                                                                                                </svg>
-                                                                                            </span>
-                                                                                            Facebook
-                                                                                        </span>
-                                                                                    </div>
-
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Name :</span>
-                                                                                        <p>{item?.callerapi?.name != null ? item?.callerapi?.name : '-'}</p>
-                                                                                    </div>
-
-                                                                                    {/* <div className='social-media-content-item'>
-                                                                                        <span>Type :</span>
-                                                                                        <p>{item?.hiya?.type != null ? item?.hiya?.type : '-'}</p>
-                                                                                    </div> */}
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Spam :</span>
-                                                                                        <p>{item?.callerapi?.is_spam != null ? item?.callerapi?.is_spam : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Spam Count:</span>
-                                                                                        <p>{item?.callerapi?.spam_count != null ? item?.callerapi?.spam_count : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Spam Score:</span>
-                                                                                        <p>{item?.callerapi?.spam_score != null ? item?.callerapi?.spam_score : '-'}</p>
-                                                                                    </div>
-                                                                                    <div className='social-media-content-item'>
-                                                                                        <span>Block Count:</span>
-                                                                                        <p>{item?.callerapi?.block_count != null ? item?.callerapi?.block_count : '-'}</p>
-                                                                                    </div>
-
-                                                                                </div>
-                                                                            </div>
-                                                                        )
-                                                                    }
-                                                                    {
                                                                         sociaData[index].truecaller && (
-                                                                            <div className="col-lg-3">
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
                                                                                 <div className='social-content-item-main'>
                                                                                     <div className='social-meadia-content-item'>
                                                                                         <span className="social-tag-main">
                                                                                             <span className='social-tag-icon'>
-                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                                                                                    <g clipPath="url(#clip0_4653_207)">
-                                                                                                        <path d="M15.4927 0.641602H1.50887C1.02989 0.641602 0.641602 1.02989 0.641602 1.50887V15.4927C0.641602 15.9717 1.02989 16.36 1.50887 16.36H15.4927C15.9717 16.36 16.36 15.9717 16.36 15.4927V1.50887C16.36 1.02989 15.9717 0.641602 15.4927 0.641602Z" fill="#3D5A98" />
-                                                                                                        <path d="M11.4853 16.3585V10.2717H13.528L13.8334 7.89971H11.4853V6.38565C11.4853 5.69901 11.6766 5.23018 12.6607 5.23018H13.9171V3.10518C13.3087 3.04189 12.6973 3.01174 12.0856 3.01487C10.2767 3.01487 9.03094 4.11721 9.03094 6.15057V7.89971H6.98828V10.2717H9.03094V16.3585H11.4853Z" fill="white" />
-                                                                                                    </g>
-                                                                                                    <defs>
-                                                                                                        <clipPath id="clip0_4653_207">
-                                                                                                            <rect width="17" height="17" fill="white" />
-                                                                                                        </clipPath>
-                                                                                                    </defs>
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width={200} height={200} viewBox="0 0 1024 1024">
+                                                                                                    <rect width={1024} height={1024} rx={256} fill="#4285F4" />
+                                                                                                    <path d="M680.2 629.5c-41.8-5.8-66.2 8.6-83.8 22.2-4.8 3.8-12.2 11.4-14.3 14.3-23.4 31.8-51 37.3-84.3 33-49.7-6.7-88-33.4-123.8-69.2s-62.5-74.2-69.2-123.8c-4.2-30.4 2.6-57.2 33-84.3 3-2.2 10.7-9.5 14.3-14.3 13.6-17.7 28-42.2 22.2-83.8-2.3-16.7-13.3-31.5-30.5-40.2-17.8-9-39.6-9.7-59.4-1.8-34.2 13.6-61.4 41-79.3 75.3-19.7 37.5-25.7 80.8-20 125.5 13.4 103.5 62 193 137.5 268.5S496.5 817.2 600 830.5c44.7 5.7 88-0.3 125.5-20 34.2-17.8 61.6-45 75.3-79.3 7.8-19.8 7.2-41.6-1.8-59.4-8.7-17.2-23.5-28.3-40.2-30.5z" fill="#FFF" />
+                                                                                                    <path d="M597.5 679.5c20.7-17 43.7-30.4 75.4-33.8 31.2-3.3 62.7 8.7 84.7 31.6 13.2 13.7 24.8 31.2 29.4 53.2 4.7 22.7-1.2 46.4-12.4 67.6-15.5 29.5-39.5 56-69.6 69.8-29.2 13.4-63 17.8-96.7 15.7-109.7-7.3-207.3-58.4-287.7-138.7S168.7 542.8 161.3 433c-2.1-33.7 2.4-67.5 15.7-96.7 13.8-30.1 40.3-54.1 69.8-69.6 21.1-11.2 44.9-17.1 67.6-12.4 22 4.6 39.5 16.2 53.2 29.4 22.8 22 34.9 53.5 31.6 84.7-3.5 31.7-16.9 54.7-33.8 75.4-3.6 4.5-12.1 12.7-12.2 12.7-20.7 17-25.7 33.4-22 54.3 5.4 30.4 30.7 66 63.5 98.8s68.4 58 98.8 63.5c20.8 3.6 37.2-1.3 54.3-22 .2 0 8.2-8.7 12.7-12.2z" fill="#FFF" />
                                                                                                 </svg>
                                                                                             </span>
-                                                                                            Facebook
+                                                                                            <span>Truecaller</span>
                                                                                         </span>
                                                                                     </div>
                                                                                     <div className='social-media-content-item'>
@@ -341,31 +263,245 @@ const ProfilePage = (({ profilerData }) => {
                                                                                                 )
                                                                                             }
                                                                                         </div>
-                                                                                    </div>                                                                             
-                                                                                <div className='social-media-content-item'>
-                                                                                    <span>Number Type :</span>
-                                                                                    <p>{item?.truecaller?.number_type != null ? item?.truecaller?.number_type : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Number Type :</span>
+                                                                                        <p>{item?.truecaller?.number_type != null ? item?.truecaller?.number_type : '-'}</p>
 
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Reputation Score :</span>
+                                                                                        <p>{item?.hiya?.reputation_score != null ? item?.hiya?.reputation_score : '-'}</p>
+                                                                                    </div>
                                                                                 </div>
-                                                                                <div className='social-media-content-item'>
-                                                                                    <span>Reputation Score :</span>
-                                                                                    <p>{item?.hiya?.reputation_score != null ? item?.hiya?.reputation_score : '-'}</p>
-                                                                                </div>
-                                                                            </div>
                                                                             </div >
                                                                         )
+                                                                    }
+                                                                    {
+                                                                        sociaData[index].hiya && (
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
+                                                                                <div className='social-content-item-main'>
+                                                                                    <div className='social-meadia-content-item'>
+                                                                                        <span className="social-tag-main">
+                                                                                            <span className='social-tag-icon'>
+                                                                                                <svg width={20} height={20} viewBox="0 0 88 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                                    <path fillRule="evenodd" clipRule="evenodd" d="M24.662 25.891V36.373C24.662 37.709 23.943 38.428 22.607 38.428H20.552C19.216 38.428 18.497 37.709 18.497 36.373V25.737C18.497 21.524 15.927 18.647 12.485 18.647C9.145 18.647 6.165 20.239 6.165 24.967V36.373C6.165 37.709 5.446 38.428 4.111 38.428H2.055C0.719 38.428 0 37.709 0 36.373V2.64201C0 1.30601 0.72 0.587006 2.055 0.587006H4.111C5.446 0.587006 6.166 1.30601 6.166 2.64201V12.532C6.166 14.177 6.834 14.434 8.066 13.662C9.3 12.892 10.79 12.482 12.486 12.482C20.398 12.482 24.662 18.235 24.662 25.891ZM58.65 13.432C59.986 13.432 60.705 14.152 60.705 15.487V39.353C60.705 44.697 56.03 48.704 49.761 48.704C46.987 48.704 44.161 48.191 42.105 47.009C40.975 46.341 40.924 45.211 41.745 44.131L42.928 42.59C43.698 41.562 44.572 41.562 45.754 42.025C46.884 42.435 48.168 42.539 49.761 42.539C52.741 42.539 54.54 40.483 54.54 39.353V36.887C53.153 38.017 51.354 38.685 49.247 38.685C41.335 38.685 37.07 32.931 37.07 25.275V15.487C37.07 14.151 37.79 13.432 39.126 13.432H41.181C42.517 13.432 43.236 14.152 43.236 15.487V25.429C43.236 29.642 45.805 32.519 49.247 32.519C51.405 32.519 53.409 31.851 54.54 30.156V15.487C54.54 14.151 55.259 13.432 56.595 13.432H58.65ZM79.769 30.893L79.719 23.301C79.369 19.804 76.872 19.205 74.624 19.205C72.177 19.205 68.83 21.453 68.83 26.098C68.83 29.394 71.078 32.691 75.223 32.691C77.471 32.691 78.87 31.792 79.769 30.893ZM87.361 33.94L86.961 36.437C86.761 37.687 85.963 38.335 84.664 38.086C83.016 37.836 81.867 37.486 81.068 36.737C79.619 37.687 77.671 38.685 75.223 38.685C66.883 38.685 62.786 31.942 62.786 26.248C62.786 18.805 66.932 13.211 74.624 13.211C81.417 13.211 85.763 17.656 85.763 22.851V27.397C85.763 28.995 85.763 30.743 86.363 31.642C86.912 32.542 87.561 32.841 87.361 33.94ZM34.984 4.79601C34.9925 5.3408 34.8925 5.88185 34.6899 6.38764C34.4873 6.89344 34.1861 7.35387 33.8039 7.74214C33.4216 8.13041 32.9659 8.43876 32.4634 8.64923C31.9608 8.85971 31.4214 8.9681 30.8765 8.9681C30.3316 8.9681 29.7922 8.85971 29.2896 8.64923C28.7871 8.43876 28.3314 8.13041 27.9491 7.74214C27.5669 7.35387 27.2657 6.89344 27.0631 6.38764C26.8605 5.88185 26.7605 5.3408 26.769 4.79601C26.7858 3.71773 27.226 2.68931 27.9945 1.93273C28.7629 1.17615 29.7981 0.752098 30.8765 0.752098C31.9549 0.752098 32.9901 1.17615 33.7585 1.93273C34.527 2.68931 34.9672 3.71773 34.984 4.79601Z" fill="#6A44B9" />
+                                                                                                    <path fillRule="evenodd" clipRule="evenodd" d="M33.95 15.651C33.95 13.193 31.64 12.791 29.477 11.961C26.77 10.924 23.675 7.93301 23.708 4.79601C23.708 3.46001 22.988 2.74101 21.653 2.74101H21.321C19.985 2.74101 19.266 3.46101 19.266 4.79601V5.97601C19.266 8.72101 20.852 11.168 22.688 13.016C25.621 15.638 27.452 19.542 27.784 24.309V36.373C27.784 37.709 28.503 38.428 29.839 38.428H31.894C33.23 38.428 33.949 37.709 33.949 36.373V15.65" fill="#6A44B9" />
+                                                                                                </svg>
 
-                                                    }
-                                                </>
-                                                )
+                                                                                            </span>
+                                                                                            Hiya
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Name :</span>
+                                                                                        <p>{item?.hiya?.name != null ? item?.hiya?.name : '-'}</p>
+                                                                                    </div>
+
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Type :</span>
+                                                                                        <p>{item?.hiya?.type != null ? item?.hiya?.type : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Spam :</span>
+                                                                                        <p>{item?.hiya?.is_spam != null ? (item?.hiya?.is_spam ? 'Yes' : 'No') : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Category :</span>
+                                                                                        <p>{item?.hiya?.category != null ? item?.hiya?.category : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Reputation :</span>
+                                                                                        <p>{item?.hiya?.reputation != null ? item?.hiya?.reputation : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Spam Score :</span>
+                                                                                        <p>{item?.hiya?.spam_score != null ? item?.hiya?.spam_score : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Reputation Score :</span>
+                                                                                        <p>{item?.hiya?.reputation_score != null ? item?.hiya?.reputation_score : '-'}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        sociaData[index].callerapi && (
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
+                                                                                <div className='social-content-item-main'>
+                                                                                    <div className='social-meadia-content-item'>
+                                                                                        <span className="social-tag-main">
+                                                                                            <span className='social-tag-icon'>
+                                                                                                <svg className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" height={20} width={20} xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" enableBackground="new 0 0 500 500" xmlSpace="preserve">
+                                                                                                    <path opacity={1.000000} stroke="none" d="
+                                                                                                        M281.987061,462.037354 
+                                                                                                            C227.641983,468.339569 176.604263,459.051605 129.514267,432.010956 
+                                                                                                            C62.331078,393.432098 21.158209,335.715698 6.378690,259.545563 
+                                                                                                            C3.918549,246.866577 0.854233,233.896591 4.089091,220.982315 
+                                                                                                            C5.786692,214.205093 8.319109,206.999542 12.540708,201.604065 
+                                                                                                            C29.417498,180.034378 54.396034,168.747406 82.686134,175.992661 
+                                                                                                            C108.064865,182.492310 127.438911,207.128998 128.189819,233.353714 
+                                                                                                            C128.611237,248.071335 124.859169,261.237274 116.450691,273.259308 
+                                                                                                            C115.584045,274.498383 115.511185,277.076508 116.190269,278.498108 
+                                                                                                            C132.576981,312.802063 158.193604,337.803894 193.261353,352.403595 
+                                                                                                            C233.933319,369.336456 274.719818,368.527466 314.716248,349.944122 
+                                                                                                            C346.841675,335.017883 370.219513,310.945038 385.894592,279.233948 
+                                                                                                            C387.313416,276.363617 386.241364,274.724121 384.716583,272.640381 
+                                                                                                            C356.892670,234.616653 381.253845,179.289062 428.080811,174.094208 
+                                                                                                            C468.099854,169.654587 501.109344,202.976318 497.646454,243.085831 
+                                                                                                            C490.481812,326.071991 432.005096,412.200165 341.225037,447.022095 
+                                                                                                            C322.200836,454.319489 302.665527,459.495636 281.987061,462.037354 
+                                                                                                        z" />
+                                                                                                    <path opacity={1.000000} stroke="none" d="
+                                                                                                        M374.606873,150.704010 
+                                                                                                            C350.993317,162.085785 328.393707,161.099411 307.459961,145.642227 
+                                                                                                            C287.446625,130.864685 279.621918,110.161049 283.245758,85.907906 
+                                                                                                            C286.640594,63.187645 299.700928,46.818111 321.045502,38.110863 
+                                                                                                            C359.504272,22.422087 401.795898,46.838215 406.608063,88.065041 
+                                                                                                            C409.779419,115.234566 398.459869,136.277359 374.606873,150.704010 
+                                                                                                        z" />
+                                                                                                    <path opacity={1.000000} stroke="none" d="
+                                                                                                            M190.823212,43.121002 
+                                                                                                            C226.373749,66.099083 228.962479,115.855827 198.832306,142.256729 
+                                                                                                            C180.584915,158.245605 159.272354,162.615662 136.444336,154.471893 
+                                                                                                            C112.388618,145.890121 98.088913,128.022110 95.346077,102.726852 
+                                                                                                            C92.540344,76.851501 102.643547,55.844219 125.220856,42.359428 
+                                                                                                            C146.744476,29.503979 168.855515,30.148035 190.823212,43.121002 
+                                                                                                        z" />
+                                                                                                </svg>
+
+                                                                                            </span>
+                                                                                            Callerapi
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Name :</span>
+                                                                                        <p>{item?.callerapi?.name != null ? item?.callerapi?.name : '-'}</p>
+                                                                                    </div>
+
+                                                                                    {/* <div className='social-media-content-item'>
+                                                                                        <span>Type :</span>
+                                                                                        <p>{item?.hiya?.type != null ? item?.hiya?.type : '-'}</p>
+                                                                                    </div> */}
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Spam :</span>
+                                                                                        <p>{item?.callerapi?.is_spam != null ? (item?.callerapi?.is_spam ? 'Yes' : 'No'): '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Spam Count:</span>
+                                                                                        <p>{item?.callerapi?.spam_count != null ? item?.callerapi?.spam_count : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Spam Score:</span>
+                                                                                        <p>{item?.callerapi?.spam_score != null ? item?.callerapi?.spam_score : '-'}</p>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Block Count:</span>
+                                                                                        <p>{item?.callerapi?.block_count != null ? item?.callerapi?.block_count : '-'}</p>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        sociaData[index].callapp && (
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
+                                                                                <div className='social-content-item-main'>
+                                                                                    <div className='social-meadia-content-item'>
+                                                                                        <span className="social-tag-main">
+                                                                                            <span className='social-tag-icon'>
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width={20} height={20} fill="none">
+                                                                                                    <circle cx={32} cy={32} r={30} fill="#4CAF50" stroke="#388E3C" strokeWidth={2} />
+                                                                                                    <path d="M43.8 40.4c-2.5 0-5-.4-7.4-1.4-2.3-.9-4.5-2.1-6.4-3.8-1.9-1.7-3.4-3.6-4.8-5.7-1.3-2-2.5-4.2-3.4-6.5-.7-2-.1-4.1 1.5-5.6l3.2-3.1c.8-.8 2-.9 3-.3l5.8 3.3c1 .6 1.5 1.7 1.4 2.9l-.2 2.5c-.1 1.1-.8 2-1.8 2.4-.7.3-1.3.7-2 1.1-.7.4-1.4.8-2 1.2.7 1.4 1.6 2.6 2.6 3.7 1 1 2.3 2 3.6 2.6.4-.6.8-1.3 1.2-2 .4-.7.8-1.3 1.1-2 .4-1 1.3-1.6 2.4-1.8l2.5-.2c1.2-.1 2.3.4 2.9 1.4l3.3 5.8c.6 1 .5 2.3-.3 3l-3.1 3.2c-1.5 1.5-3.6 2.1-5.6 1.5-2.4-.8-4.6-1.8-6.5-3.1Z" fill="#FFF" />
+                                                                                                </svg>
+                                                                                            </span>
+                                                                                            Callapp
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Name :</span>
+                                                                                        <p>{item?.callapp?.name != null ? item?.callapp?.name : '-'}</p>
+                                                                                    </div>
+
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Priority :</span>
+                                                                                        <p>{item?.callapp?.priority != null ? item?.callapp?.priority : '-'}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        sociaData[index].eyecon && (
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
+                                                                                <div className='social-content-item-main'>
+                                                                                    <div className='social-meadia-content-item'>
+                                                                                        <span className="social-tag-main">
+                                                                                            <span className='social-tag-icon'>
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width={128} height={128} fill="none">
+                                                                                                    {/* Background Circle */}
+                                                                                                    <circle cx={32} cy={32} r={30} fill="#2196F3" stroke="#1565C0" strokeWidth={2} />
+                                                                                                    {/* Eye Outer Shape */}
+                                                                                                    <path d="M32 20C23 20 15 28 15 28s8 8 17 8 17-8 17-8-8-8-17-8Z" fill="#FFF" />
+                                                                                                    {/* Eye Pupil */}
+                                                                                                    <circle cx={32} cy={28} r={6} fill="#1565C0" />
+                                                                                                    {/* Eye Glow (Optional) */}
+                                                                                                    <circle cx={32} cy={28} r={2} fill="#FFF" />
+                                                                                                </svg>
+                                                                                            </span>
+                                                                                            Eyecon
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div className='social-media-content-item'>
+                                                                                        <span>Eyecon:</span>
+                                                                                        <p>{item?.eyecon != null ? item?.eyecon : '-'}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )
+                                                                    }
+
+                                                                    {
+                                                                        sociaData[index].viewcaller && sociaData[index].viewcaller.length > 0 && (
+                                                                            <div className="col-lg-3 col-md-6" key={index + Date.now()}>
+                                                                                <div className='social-content-item-main'>
+                                                                                    <div className='social-meadia-content-item'>
+                                                                                        <span className="social-tag-main">
+                                                                                            <span className='social-tag-icon'>
+                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">
+                                                                                                    <g clipPath="url(#clip0_4653_207)">
+                                                                                                        <path d="M15.4927 0.641602H1.50887C1.02989 0.641602 0.641602 1.02989 0.641602 1.50887V15.4927C0.641602 15.9717 1.02989 16.36 1.50887 16.36H15.4927C15.9717 16.36 16.36 15.9717 16.36 15.4927V1.50887C16.36 1.02989 15.9717 0.641602 15.4927 0.641602Z" fill="#3D5A98" />
+                                                                                                        <path d="M11.4853 16.3585V10.2717H13.528L13.8334 7.89971H11.4853V6.38565C11.4853 5.69901 11.6766 5.23018 12.6607 5.23018H13.9171V3.10518C13.3087 3.04189 12.6973 3.01174 12.0856 3.01487C10.2767 3.01487 9.03094 4.11721 9.03094 6.15057V7.89971H6.98828V10.2717H9.03094V16.3585H11.4853Z" fill="white" />
+                                                                                                    </g>
+                                                                                                    <defs>
+                                                                                                        <clipPath id="clip0_4653_207">
+                                                                                                            <rect width="17" height="17" fill="white" />
+                                                                                                        </clipPath>
+                                                                                                    </defs>
+                                                                                                </svg>
+                                                                                            </span>
+                                                                                            Viewcaller
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div >
+                                                                        )
+                                                                    }
+                                                                </>
+                                                            )
                                                         })
                                                     }
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            {/* <div className='col-lg-5'>
+                                {/* <div className='col-lg-5'>
                                     <div className="instant-meassageing-area-main">
                                         <div className="profile-information-area-header">
                                             <h4>Instant Messaging</h4>
@@ -727,11 +863,11 @@ const ProfilePage = (({ profilerData }) => {
                                         </div>
                                     </div>
                                 </div> */}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div >
+            </div >
         </>
 
     )

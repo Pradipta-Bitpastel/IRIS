@@ -97,7 +97,7 @@ import { CssBaseline } from "@mui/material";
 // import Loading from "@/app/loading";
 
 const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_id?: string } }) => {
-  // console.log(params, "paramm");
+
 
   const [loaderStatus, setLoaderStatus] = useState(false);
   const [detailSectionLoader, setDetailSectionLoader] = useState(false)
@@ -260,7 +260,11 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
     orderby_field: '',
     orderby_type: ''
   });
-  const [dashboardmsgId, setdashboardmsgId] = useState<string>()
+  const [dashboardmsgId, setdashboardmsgId] = useState<string>(
+    searchParams.has('msg_id') ? searchParams.get('msg_id') : ''
+  )
+
+  // console.log(searchParams.has('msg_id'), "paramm");
   const handelSortingChange = (event: any) => {
     // let resultVal = (event.target.value).split('-')
     let inputPayload = splitStringAscDesc(event.target.value)
@@ -857,8 +861,9 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
     if (params && Object.keys(params).length > 0) {
       // alert(JSON.stringify(searchParams.get('type')))
       // setSelectbtn(JSON.stringify(searchParams.get('type')))
+      // console.log(params);
       
-      setdashboardmsgId(JSON.stringify(searchParams.get("msg_id")).replace(/"/g, ''))
+      // setdashboardmsgId(JSON.stringify(searchParams.get("msg_id")).replace(/"/g, ''))
       setShowLabel(() => {
         return { ...showLabel, searchStr: decodeURIComponent(params?.id) };
 
@@ -868,10 +873,11 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
       onSearch(decodeURIComponent(params?.id));
     }
     else if (searchParams.has("id")) {
+      console.log(params);
       let btnSelction: string = JSON.stringify(searchParams.get('type')).replace(/"/g, '');
       setSelectbtn(btnSelction)
       // alert(searchParams.get("msg_id"))
-      setdashboardmsgId(JSON.stringify(searchParams.get("msg_id")).replace(/"/g, ''))
+      // setdashboardmsgId(JSON.stringify(searchParams.get("msg_id")).replace(/"/g, ''))
       // onSearch(searchParams.get("keyword"));
       goToDetailsPage(JSON.stringify({ id: searchParams.get("id"), type: searchParams.get("type") }))
       // --18thNov24
@@ -2265,15 +2271,15 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
                                                       {
                                                         (searchItem && searchItem?.risk_score) ? (
                                                           <>
-                                                            <img
+                                                            {/* <img
                                                               src={`${riskFactorCalc(searchItem?.risk_score).photo.src}`}
                                                               alt="risk_image"
-                                                            />
+                                                            /> */}
                                                             <span
-                                                              className={`${riskFactorCalc(searchItem?.risk_score)?.className}`}
+                                                              // className={`${riskFactorCalc(searchItem?.risk_score)?.className}`}
                                                             >
                                                               {
-                                                                searchItem?.risk_score ? searchItem?.risk_score + '%' : '0' + '%'
+                                                                searchItem?.risk_score
                                                               }
                                                             </span>
                                                           </>

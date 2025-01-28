@@ -425,7 +425,7 @@ const PersonDetailView = memo(({
           <div className="details-wrapper">
             {/* <Link href={'/profiler'}>Profiler</Link> */}
             {/* <Tooltip title={'Work in Progress'} placement="top" arrow> */}
-              <Link href={`profiler/${entityDetails &&entityDetails?.id}`}>Profiler</Link>
+              {/* <Link href={`/profiler/${entityDetails &&entityDetails?.id}`}>Profiler</Link> */}
             {/* </Tooltip> */}
           </div>
           <div className="search_result_inner_people_profile_area ">
@@ -433,7 +433,7 @@ const PersonDetailView = memo(({
 
               <div className="search_result_inner_people_profile_img">
                 <img
-                  src={`${entityDetails?.profile_image_url ||
+                  src={`${entityDetails?.profile_image_url && entityDetails?.profile_image_url[0] ||
                     "/asset/default_img/default_img.jpg"
                     }`}
                   // fill={true}
@@ -481,21 +481,21 @@ const PersonDetailView = memo(({
                 {
                   entityDetails?.risk_score ? (
                     <>
-                      <img
+                      {/* <img
                         src={
                           entityDetails?.risk_score
                             ? `${riskFactorCalc(entityDetails?.risk_score).photo.src}`
                             : "/"
                         }
                         alt="risk_image"
-                      />
+                      /> */}
 
-                      <span
-                        className={`${riskFactorCalc(entityDetails?.risk_score)?.className
-                          }`}
+                      <p className="mb-0"
+                        // className={`${riskFactorCalc(entityDetails?.risk_score)?.className
+                        //   }`}
                       >
-                        {entityDetails?.risk_score + '%'}
-                      </span>
+                        {entityDetails?.risk_score}
+                      </p>
                     </>
                   )
                     :
@@ -513,6 +513,9 @@ const PersonDetailView = memo(({
             <button className="join-grp-btn" disabled={true}>
               External Enrichment
             </button>
+            <Link href={`/profiler/${entityDetails &&entityDetails?.id}`} className="join-grp-btn profiler">
+              Profiler
+            </Link>
           </div>
 
           <div className="wrapper tab-wrapper">
@@ -637,7 +640,7 @@ const PersonDetailView = memo(({
                                                   (eachMemberGroup && eachMemberGroup?.group?.risk_score) ?
                                                     (
                                                       <>
-                                                        <img
+                                                        {/* <img
                                                           src={
                                                             eachMemberGroup?.group
                                                               ?.risk_score
@@ -649,17 +652,17 @@ const PersonDetailView = memo(({
                                                               : "/"
                                                           }
                                                           alt="risk_image"
-                                                        />
+                                                        /> */}
                                                         <span
-                                                          className={`${riskFactorCalc(
-                                                            eachMemberGroup?.group
-                                                              ?.risk_score || "20%"
-                                                          )?.className
-                                                            }`}
+                                                          // className={`${riskFactorCalc(
+                                                          //   eachMemberGroup?.group
+                                                          //     ?.risk_score || "20%"
+                                                          // )?.className
+                                                          //   }`}
                                                         >
                                                           {
                                                             `${eachMemberGroup?.group
-                                                              ?.risk_score}%`
+                                                              ?.risk_score}`
                                                           }
                                                         </span>
                                                       </>

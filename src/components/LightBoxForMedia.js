@@ -225,7 +225,7 @@ const LightBOxForMedia = ({ mediaArr, mediaIdForLightbox }) => {
               <div key={eachMediaObjIndex} className="lightbox-media-gallery-card">
                 {eachMediaObj?.message_media?.media_type?.split('/')[0] === "video" ? (
                   <img
-                    src={`${eachMediaObj?.message_media?.thumbnail_url || video_icon_path}`}
+                    src={`${video_icon_path || eachMediaObj?.message_media?.thumbnail_url }`}
                     alt="Audio Thumbnail"
                     className="img-fluid"
                   />

@@ -61,6 +61,7 @@ import Loading from '@/app/loading';
 import { off } from 'process';
 import { count } from 'console';
 import { translateData } from '../types/type';
+import Link from 'next/link';
 //   import faker from 'faker';
 
 ChartJS.register(
@@ -526,7 +527,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
   //         });
   //         $(".tab-nav li:first-child").addClass("active");
   //       }, [activeTab]);
- 
+
   const clickJoinGroup = (e) => {
     $("#overlay-join-overlay").css("display", "block");
     $("#overlay-join-popup").css("display", "block");
@@ -639,7 +640,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
     }
   }, [groupMembers, groupMessages, groupMedias]);
 
-  // console.log(groupMessages, "groupMessages");
+  // console.log(groupDetails, "groupMessages");
 
 
   return (
@@ -694,19 +695,19 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                   {
                     groupDetails && groupDetails?.risk_score ? (
                       <>
-                        <img
+                        {/* <img
                           src={`${riskFactorCalc(groupDetails?.risk_score)?.photo.src
                             }`}
                           alt="risk_image"
-                        />
-                        <span
-                          className={`${riskFactorCalc(
-                            groupDetails?.risk_score
-                          )?.className
-                            }`}
+                        /> */}
+                        <p
+                        // className={`${riskFactorCalc(
+                        //   groupDetails?.risk_score
+                        // )?.className
+                        //   }`}
                         >
-                          {`${groupDetails?.risk_score}%`}
-                        </span>
+                          {`${groupDetails?.risk_score}`}
+                        </p>
                       </>
                     )
                       :
@@ -718,8 +719,9 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
             </div>
 
             <div className="join-group">
-              <button onClick={clickJoinGroup} className="join-grp-btn">
-                JOIN LINK
+              {/* <button onClick={clickJoinGroup} className="join-grp-btn"> */}
+              <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
+                <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>JOIN LINK</Link>
               </button>
             </div>
           </div>

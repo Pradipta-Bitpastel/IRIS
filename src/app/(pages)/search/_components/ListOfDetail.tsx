@@ -598,7 +598,7 @@ const ListOfDetail = memo(({ listDetail, setListDetail, listDetailInfo, restrict
                                             <img
                                               src={`${(
                                                 searchItem as TSearchEntityApiSerializerResponse
-                                              )?.profile_photo_url ||
+                                              )?.profile_photo_url[0] ||
                                                 "/asset/default_img/default_img.jpg"
                                                 }`}
                                               // fill={true}
@@ -716,17 +716,17 @@ const ListOfDetail = memo(({ listDetail, setListDetail, listDetailInfo, restrict
                                             </span>
 
                                             <div className="inner_card_group_risk">
-                                              <span>Group Risk Score: </span>
+                                              <span>Group Risk Score : </span>
                                               <div className="inner_card_group_risk_svg">
                                                 {
                                                   (searchItem && searchItem?.risk_score) ?(
                                                     <>
-                                                      <img
+                                                      {/* <img
                                                         src={`${riskFactorCalc(searchItem?.risk_score).photo.src}`}
                                                         alt="risk_image"
-                                                      />
+                                                      /> */}
                                                       <span
-                                                        className={`${riskFactorCalc(searchItem?.risk_score)?.className}`}
+                                                        // className={`${riskFactorCalc(searchItem?.risk_score)?.className}`}
                                                       >
                                                         {
                                                           searchItem?.risk_score 

@@ -13,7 +13,8 @@ const page = ({ params }: { params: { id: string } }) => {
     const router = useRouter();
     const [profilerData, setProfilerData] = React.useState<Array<any>>([]);
     const [loaderStatus, setLoaderStatus] = React.useState<boolean>(true);
-    const fetchProfiler = async (payload) => {
+    const [noData, setNoData] = React.useState<boolean>(false);
+    const fetchProfiler = async () => {
         try {
             let payload = new FormData();
             payload.append('entity_id', params.id[0]);
@@ -32,17 +33,18 @@ const page = ({ params }: { params: { id: string } }) => {
         }
     }
     const fetchData = async () => {
-        let data = await fetchProfiler(params.id[0])
+        let data = await fetchProfiler()
         if (data?.status == '200') {
             setProfilerData(data?.data as any);
             setLoaderStatus(false);
+        } else {
+            setLoaderStatus(false);
+            setNoData(true);
         }
     }
     useEffect(() => {
-        if (params.id) {
-            fetchData();
-        }
-    }, [])
+        fetchData();
+    }, [params])
     useEffect(() => {
         const checkAuthentication = () => {
             const sessionData = localStorage.getItem('sessionCheck');
@@ -54,7 +56,7 @@ const page = ({ params }: { params: { id: string } }) => {
             router.replace('/'); // Redirect to the homepage if not authenticated
         }
     }, [router]); // Add router to the dependency array
-    // console.log(profilerData, "profilerData");
+    console.log(profilerData, "profilerData");
 
     return (
         <>
@@ -63,7 +65,19 @@ const page = ({ params }: { params: { id: string } }) => {
                     <Loading />
                 )
             }
-            <Profiler profilerData={profilerData} />
+            {
+                noData ? (
+                    <div className='no-data-found profilerPage'>
+                        <p className='text-white'> No data found</p>
+
+                    </div>
+                )
+                    : (
+                        <>
+                            <Profiler profilerData={profilerData && profilerData} />
+                        </>
+                    )
+            }
         </ >
     )
 }

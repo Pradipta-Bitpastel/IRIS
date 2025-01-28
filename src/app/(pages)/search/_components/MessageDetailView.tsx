@@ -157,7 +157,7 @@ const MessageDetailView = memo(({
                   {
                     !messageDetails && !messageDetails?.risk_score ? (
                       <>
-                        <img
+                        {/* <img
                           src={
                             messageDetails?.risk_score
                               ? `${riskFactorCalc(messageDetails?.risk_score).photo.src
@@ -165,14 +165,14 @@ const MessageDetailView = memo(({
                               : "/"
                           }
                           alt="risk_image"
-                        />
+                        /> */}
 
-                        <span
-                          className={`${riskFactorCalc(messageDetails?.risk_score)?.className
-                            }`}
+                        <p
+                          // className={`${riskFactorCalc(messageDetails?.risk_score)?.className
+                          //   }`}
                         >
-                          {messageDetails?.risk_score + "%"}
-                        </span>
+                          {messageDetails?.risk_score }
+                        </p>
                       </>
 
                     )

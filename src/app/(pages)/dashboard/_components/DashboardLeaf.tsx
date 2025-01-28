@@ -258,7 +258,7 @@ const DashboardLeaf = memo(() => {
         // "message_count": 2452
         callApiOnce = callApiOnce + 1;
         // console.log(responseStatData);
-        
+
         // console.log(responseMsgData, responseStatData, responseWordCloud, "response from message");
         setMsgCounter(responseStatData?.data.message_count);
         setGroupCounter(responseStatData?.data.group_count);
@@ -759,7 +759,7 @@ const DashboardLeaf = memo(() => {
                     <div className="left_card_title">
                       <div className="d-flex align-items-center">
                         <h5>Running Log Files</h5>
-                        <Tooltip title={'Running Log Files'} placement="right-start" arrow
+                        <Tooltip title={'Shows the latest messages received by the system.'} placement="right-start" arrow
                         >
                           <svg className="ms-1" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} width={20} height={20} viewBox="0 0 36 36"><path fill="#fff" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
                         </Tooltip>
@@ -811,12 +811,12 @@ const DashboardLeaf = memo(() => {
                                         </p>
                                       </div>
                                       <div className="inner_card_group_risk">
-                                        <span>Group Risk Score: </span>
+                                        <span>Group Risk Score :</span>
                                         <div className="inner_card_group_risk_svg">
                                           {
                                             (msg_item && msg_item?.risk_score) ? (
                                               <>
-                                                <img
+                                                {/* <img
                                                   src={
                                                     msg_item.risk_score
                                                       ? `${riskFactorCalc(
@@ -826,9 +826,9 @@ const DashboardLeaf = memo(() => {
                                                       : "/"
                                                   }
                                                   alt="risk score"
-                                                />
+                                                /> */}
 
-                                                <span
+                                                {/* <span
                                                   className={`${msg_item.risk_score
                                                     ? `${riskFactorCalc(
                                                       msg_item.risk_score
@@ -836,8 +836,11 @@ const DashboardLeaf = memo(() => {
                                                     }`
                                                     : "/"
                                                     }`}
+                                                > */}
+                                                <span
+                                                  className=''
                                                 >
-                                                  {msg_item.risk_score + "%"}
+                                                  {msg_item.risk_score}
                                                 </span>
                                               </>
                                             )
@@ -995,7 +998,7 @@ const DashboardLeaf = memo(() => {
                       <div className="d-flex align-items-center">
                         <h5>Alerts</h5>
                         <span>
-                          <Tooltip title={'Alerts'} arrow>
+                          <Tooltip title={'Shows messages, groups, and users that match your alerts conditions.'} arrow>
                             <svg className="ms-1" style={{ cursor: 'pointer' }} xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 36 36"><path fill="#fff" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
                           </Tooltip>
                         </span>
@@ -1042,12 +1045,12 @@ const DashboardLeaf = memo(() => {
                                     <p>{msg_item?.message_text.length > 70 ? `${msg_item?.message_text.slice(0, 70)} ...` : msg_item?.message_text}</p>
                                   </div>
                                   <div className="inner_card_group_risk">
-                                    <span>Group Risk Score: </span>
+                                    <span>Group Risk Score :</span>
                                     <div className="inner_card_group_risk_svg">
                                       {
                                         msg_item && msg_item?.risk_score ? (
                                           <>
-                                            <img
+                                            {/* <img
                                               src={
                                                 msg_item?.risk_score
                                                   ? `${riskFactorCalc(
@@ -1057,17 +1060,11 @@ const DashboardLeaf = memo(() => {
                                                   : "/"
                                               }
                                               alt="risk score"
-                                            />
+                                            /> */}
                                             <span
-                                              className={`${msg_item.risk_score
-                                                ? `${riskFactorCalc(
-                                                  msg_item.risk_score
-                                                )?.className
-                                                }`
-                                                : "/"
-                                                }`}
+
                                             >
-                                              {msg_item.risk_score + "%"}
+                                              {msg_item.risk_score}
                                             </span>
                                           </>
                                         )
@@ -1116,7 +1113,7 @@ const DashboardLeaf = memo(() => {
                       <div className="host_trend_cloud_title">
                         <div className="d-flex align-items-center">
                           <h5>Active Groups</h5>
-                          <Tooltip title={'Active Groups'} arrow>
+                          <Tooltip title={'Top groups with the most new messages in the last 24 hours.'} arrow>
                             <svg className="ms-1" style={{ 'marginBottom': '8px', 'cursor': 'pointer' }} xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 36 36"><path fill="#fff" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
                           </Tooltip>
                         </div>
@@ -1181,7 +1178,7 @@ const DashboardLeaf = memo(() => {
                       <div className="host_trend_cloud_title">
                         <div className="d-flex align-items-center">
                           <h5>Active Entities</h5>
-                          <Tooltip title={'Active Entities'} arrow>
+                          <Tooltip title={'Top phone numbers sending the most messages in the last 24 hours.'} arrow>
                             <svg className="ms-1" style={{ 'marginBottom': '8px', 'cursor': 'pointer' }} xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 36 36"><path fill="#fff" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
                           </Tooltip>
                         </div>
@@ -1238,7 +1235,7 @@ const DashboardLeaf = memo(() => {
                   <div className="host_trend_cloud_title">
                     <div className="d-flex align-items-center">
                       <h5>Hosts Trend Cloud</h5>
-                      <Tooltip title={'Hosts Trend Cloud'} arrow>
+                      <Tooltip title={"Word cloud of the most frequent words used across all groups (common words like 'and', 'the', etc. are excluded)."} arrow>
                         <svg className="ms-1" style={{ 'marginBottom': '8px', 'cursor': 'pointer' }} xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 36 36"><path fill="#fff" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
                       </Tooltip>
                     </div>
@@ -1252,43 +1249,50 @@ const DashboardLeaf = memo(() => {
                           item?.type === "messages"
                         )
                         ?.slice(0, 30)
-                        ?.map((item, itemIndex) => {
+                        ?.map((item: any, itemIndex) => {
                           return (
-                            <Link
-                              key={itemIndex}
-                              className={item.style}
-                              href={{
-                                pathname:
-                                  item?.type === "messages"
-                                    ? `/search/${(item as TMessageCloudData).word}`
-                                    : ``,
-                                query:
-                                  item?.type !== "messages"
-                                    ? {
-                                      id:
-                                        item?.type === "groups"
-                                          ? (item as TGroupWordCloud).id
-                                          : item?.type === "entities"
-                                            ? (item as TEntityWordCloud).id
-                                            : "",
-                                      type:
-                                        item?.type === "groups"
-                                          ? "group"
-                                          : item?.type === "entities"
-                                            ? "entity"
-                                            : "",
-                                      keyword:
-                                        item?.type === "groups"
-                                          ? (item as TGroupWordCloud).group_name
-                                          : item?.type === "entities"
-                                            ? (item as TEntityWordCloud).phone_number
-                                            : "",
-                                    }
-                                    : null,
-                              }}
-                            >
-                              {item?.type === "messages" ? (item as TMessageCloudData).word : ""}
-                            </Link>
+                            <>
+                              {
+                                item?.word !== ".." && (
+                                  <Link
+                                    key={itemIndex}
+                                    className={item.style}
+                                    href={{
+                                      pathname:
+                                        item?.type === "messages"
+                                          ? `/search/${(item as TMessageCloudData).word}`
+                                          : ``,
+                                      query:
+                                        item?.type !== "messages"
+                                          ? {
+                                            id:
+                                              item?.type === "groups"
+                                                ? (item as TGroupWordCloud).id
+                                                : item?.type === "entities"
+                                                  ? (item as TEntityWordCloud).id
+                                                  : "",
+                                            type:
+                                              item?.type === "groups"
+                                                ? "group"
+                                                : item?.type === "entities"
+                                                  ? "entity"
+                                                  : "",
+                                            keyword:
+                                              item?.type === "groups"
+                                                ? (item as TGroupWordCloud).group_name
+                                                : item?.type === "entities"
+                                                  ? (item as TEntityWordCloud).phone_number
+                                                  : "",
+                                          }
+                                          : null,
+                                    }}
+                                  >
+                                    {item?.type === "messages" ? (item as TMessageCloudData).word : ""}
+                                  </Link>
+                                )
+                              }
+                            </>
+
                           );
                         })}
                     </div>
