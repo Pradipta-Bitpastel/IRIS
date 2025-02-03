@@ -1,0 +1,122 @@
+.advancedsearchFilterWrapper {
+    color: #000 !important;
+    margin-top: 7px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.advancedFilter {
+    border: none;
+    border-radius: 5px;
+    position: relative;
+    z-index: 999999999;
+}
+
+.advancedFilter {
+    color: #000 !important;
+}
+
+.filterHeader {
+    height: 30px;
+    width: 90px;
+    padding: 0 7px;
+    padding-left: 0;
+    min-width: 150px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #108DE5;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.filterHeader span {
+    font-size: 12px;
+    font-family: poppins, sans-serif;
+    font-weight: 700;
+}
+
+.arrow {
+    transition: transform 0.3s ease;
+    transform: rotate(180deg);
+    width: 10px;
+    line-height: 0;
+}
+
+.rotated {
+    transform: rotate(360deg);
+}
+
+.filterContent {
+    background-color: transparent;
+    margin-bottom: 5px;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+
+.filterLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #108DE5;
+    padding: 0px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    height: 30px;
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.filterLabel label {
+    cursor: pointer;
+}
+
+.filterDropdown {
+    list-style: none;
+    margin: 0;
+    padding-left: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    position: absolute;
+    min-width: 150px;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: auto !important;
+}
+
+.filterDropdown li {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding-left: 0;
+}
+.filterDropdown li label , .filterDropdown li input ,.filterDropdown li span{
+    cursor: pointer;
+}
+.countrDropdown{
+    min-width: 195px !important;
+}
+.filterDropdownDate{
+    position: absolute;
+    overflow: visible;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    top: 2em;
+    min-height: 400px !important;
+}
+
+@media (max-width: 600px) {
+    .filterDropdownDate{
+        right: 5px;
+    }
+}
+@media (min-width: 1025px) {
+    /* Styles for desktops */
+    .filterDropdown{
+        min-width: 255px;
+    } 
+  }
+  

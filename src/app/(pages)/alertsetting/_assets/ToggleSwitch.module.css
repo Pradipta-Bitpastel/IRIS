@@ -1,0 +1,46 @@
+.toggleSwitch {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .toggleInput {
+    display: none;
+  }
+  
+  .slider {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    position: relative;
+    transition: background-color 0.3s;
+  }
+  
+  .slider::after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 1px;
+    transition: transform 0.3s;
+  }
+  
+  .toggleInput:checked + .slider {
+    background-color: #007bff;
+  }
+  
+  .toggleInput:checked + .slider::after {
+    transform: translateX(20px);
+  }
+  
+  .labelText {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #fff;
+  }
+  
