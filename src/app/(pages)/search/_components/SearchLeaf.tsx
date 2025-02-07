@@ -1701,6 +1701,18 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
                             {categoryWiseStatus.people && [
                               <MenuItem key="country-asc" value={'Country Name ASC'}>Country Name Asc</MenuItem>,
                               <MenuItem key="country-desc" value={'Country Name DESC'}>Country Name Desc</MenuItem>,
+                              <MenuItem
+                                key="group-asc"
+                                value={"Group Count ASC"}
+                              >
+                                Group Count Asc
+                              </MenuItem>,
+                              <MenuItem
+                                key="group-desc"
+                                value={"Group Count DESC"}
+                              >
+                                Group Count Desc
+                              </MenuItem>,
                             ]}
 
                             {/* Message-specific Filters */}

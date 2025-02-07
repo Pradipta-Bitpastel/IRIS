@@ -74,7 +74,7 @@ const ProfilePicturesComponent = ({ images }) => {
                                     {images?.map((image, index) => (
                                         <div key={index} className="profiler-slick-main">
                                             <img
-                                                src={image?.file_url}
+                                                src={image?.file_url || image}
                                                 alt={`Slide ${index + 1}`}
                                                 style={{ width: "100%", borderRadius: "8px" }}
                                             />
@@ -92,7 +92,7 @@ const ProfilePicturesComponent = ({ images }) => {
                                         {images?.map((image, index) => (
                                             <div className="profiler-slick-nav" key={index}>
                                                 <img
-                                                    src={image?.file_url}
+                                                    src={image?.file_url || image}
                                                     alt={`Thumbnail ${index + 1}`}
                                                 />
                                             </div>

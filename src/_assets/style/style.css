@@ -3622,14 +3622,13 @@ canvas.mapboxgl-canvas {
   background: #03090D;
   opacity: 85%;
   /* background: rgba(0, 0, 0, 0.7); */
-
   z-index: 999;
 }
 
 
 .search_result_inner_people_profile_area {
   display: flex;
-  gap: 100px;
+  gap: 80px;
   align-items: center;
 }
 
@@ -6570,4 +6569,30 @@ p.no-data-summary-text {
 }
 .media_gallery_card_inner_img img {
   cursor: pointer;
+}
+.profile-pictures-slick-container .nav-slider .slick-track {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: none !important;
+}
+@media (min-width: 1279px) and (max-width: 1440px) {
+  .search_result_inner_people_profile_area {
+    gap: 40px;
+  }
+}
+
+@media (max-width: 850px) {
+  .join-grp-btn {
+    line-height: 12px !important;
+    height: 35px !important;
+  }
+}
+.dashboard_main .dashboard_main_left_section .left_card .no-data-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8E9DAD;
+  height: 200px;
+
 }

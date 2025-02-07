@@ -12,6 +12,7 @@ import { DateRange } from 'react-date-range';
 import { toastSettingData } from '@/constants';
 import { ToastContainer, ToastOptions, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Tooltip } from '@mui/material';
 const AlertForm = ({ selectStoreValue, setSelectStoreValue, dropdownOptions, initialValues, selectedValues, setSelectedValues, allAlertApi, getlLocalStorageData, setEditBtnStatus, editBtnstatus, filterData, alertSettingCallApi, sanatisedPayload, fromDate, toDate, setFromDate, setToDate, handleDateChange, fromInputRef, toInputRef, fromPickerRef, toPickerRef }) => {
     const [activePicker, setActivePicker] = useState<'from' | 'to' | null>(null);
     const [errors, setErrors] = useState<Errors>({});
@@ -70,8 +71,8 @@ const AlertForm = ({ selectStoreValue, setSelectStoreValue, dropdownOptions, ini
                 toInputRef.current.value = '';
                 allAlertApi()
                 toast.success(`Alert added successfully.`, toastSettingData as ToastOptions<unknown>);
-            }else if(response?.status ==='ERROR'){
-                toast.error(response?.errors?.name && response?.errors?.name[0], toastSettingData as ToastOptions<unknown>);     
+            } else if (response?.status === 'ERROR') {
+                toast.error(response?.errors?.name && response?.errors?.name[0], toastSettingData as ToastOptions<unknown>);
             }
         } catch (err) {
             console.log(err);
@@ -129,7 +130,7 @@ const AlertForm = ({ selectStoreValue, setSelectStoreValue, dropdownOptions, ini
         } catch (err) {
             console.log(err);
         }
-    
+
 
     }
 
@@ -352,9 +353,33 @@ const AlertForm = ({ selectStoreValue, setSelectStoreValue, dropdownOptions, ini
                     </div>
                 </div>
                 <div className="col-lg-3 align-self-end">
-                    <button id="searchFilterSubmit" onClick={editBtnstatus ? handelEdit : handelSubmit} className="login_form_btn">
+                    {/* <button id="searchFilterSubmit" onClick={editBtnstatus ? handelEdit : handelSubmit} className="login_form_btn">
                         {editBtnstatus ? "Update Alert" : "Add Alert"}
-                    </button>
+                    </button> */}
+                    {selectStoreValue?.length >= 3 && !editBtnstatus ? (
+                        <Tooltip
+                            title={"You’ve Reached the Maximum (3) Allowed Alerts"}
+                            placement="top"
+                            arrow
+                        >
+                            <button
+                                id="searchFilterSubmit"
+                                onClick={editBtnstatus ? handelEdit : handelSubmit}
+                                className="login_form_btn opacity-50"
+                                disabled={selectStoreValue && selectStoreValue.length >= 3}
+                            >
+                                {editBtnstatus ? "Update Alert" : "Add Alert"}
+                            </button>
+                        </Tooltip>
+                    ) : (
+                        <button
+                            id="searchFilterSubmit"
+                            onClick={editBtnstatus ? handelEdit : handelSubmit}
+                            className="login_form_btn"
+                        >
+                            {editBtnstatus ? "Update Alert" : "Add Alert"}
+                        </button>
+                    )}
                 </div>
             </div>
         </>

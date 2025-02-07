@@ -177,8 +177,7 @@ const MessageDetailView = memo(({
           <div className="search_group_details_main_card">
             <div className="search_group_details_main_card_title">
               <p>
-                {/* onClick={goToDetailsPage}
-id={`group-${item?.id}`} */}
+                {/* onClick={goToDetailsPage}id={`group-${item?.id}`} */}
                 Group: <span className="detail-section-pointer" onClick={goToDetailsPage}
                   id={`group-${messageDetails?.group_id}`}>{messageDetails?.group_name}</span>{" "}
               </p>
@@ -187,19 +186,19 @@ id={`group-${item?.id}`} */}
               {messageDetails?.prevAndNextMsgWithCurrent.map((item, index) => {
                 return (
                   <div key={index} className={`search_group_details_inner_card relative_pos 
-                    ${item?.message_text.trim().toLowerCase() !== messageDetails?.message_text.trim().toLowerCase() && deletedData.includes(index) ? 'deleted' : ''}`}
+                    ${item?.message_text.trim().toLowerCase() !== messageDetails?.message_text.trim().toLowerCase() && Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
                   >
                     <div className="search_result_people_overlay" onClick={goToDetailsPage} id={`message-${item.id}`}></div>
                     <div className="search_group_details_inner_card_image profile_img_parent details-clickable-img-zIndex">
                       <img
                         onClick={goToDetailsPage}
                         id={`entity-${item?.entity?.id}`}
-                        src={`${item?.entity?.profile_image_url ||
+                        src={`${item?.entity?.profile_image_url[0] ||
                           "/asset/default_img/default_img.jpg"
                           }`}
                         // fill={true}
                         className="img-fluid"
-                        alt="people image"
+                        alt="peoples image"
                       ></img>
                     </div>
                     <div className="search_group_details_inner_card_content">
@@ -300,7 +299,7 @@ id={`group-${item?.id}`} */}
                           return (
                             <div
                               key={index}
-                              className={`additional_messege_content  relative_pos ${deletedData.includes(index) ? 'deleted' : ''}`}
+                              className={`additional_messege_content  relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
                             >
                               <div
                                 className="search_result_people_overlay"

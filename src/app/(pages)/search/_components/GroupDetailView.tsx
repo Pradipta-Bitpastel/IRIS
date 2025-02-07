@@ -721,9 +721,12 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
 
             <div className="join-group">
               {/* <button onClick={clickJoinGroup} className="join-grp-btn"> */}
-              <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
-                <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>JOIN LINK</Link>
-              </button>
+              <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>
+                <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
+                  JOIN LINK
+                </button>
+              </Link>
+
             </div>
           </div>
           <div className="col-md-12 col-lg-6">
@@ -762,12 +765,11 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
 
                             return (
 
-                              <div key={index} className={`search_group_details_inner_card relative_pos ${deletedData.includes(index) ? "deleted" : ""}`}
+                              <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
                               >
                                 {/* <span>{item?.id}'/'{searchMsgId} '/' {index}</span> */}
                                 {/* Overlay for navigating to details */}
                                 <div className="search_result_people_overlay" onClick={goToDetailsPage} id={`message-${item.id}`}></div>
-
                                 {/* Entity Profile Image */}
                                 <div className="search_group_details_inner_card_image details-clickable-img-zIndex">
                                   <img onClick={goToDetailsPage} id={`entity-${item?.entity?.id}`} src={`${item?.entity?.profile_image_url[0]}`} className="img-fluid" alt="people image" />
@@ -962,7 +964,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                               const isMediaAvailable = item?.message_media;
 
                               return (
-                                <div key={index} className={`search_group_details_inner_card relative_pos ${deletedData.includes(index) ? "deleted" : ""}`}
+                                <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
                                 >
 
                                   {/* Overlay for navigating to details */}
@@ -1123,7 +1125,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                         )
                                       )} */}
                                       {
-                                        (item?.language !== 'en' && item?.language !== 'km' && item?.language !== 'da' && item?.language != 'zh' && item?.language !== 'unknown' &&  item?.language) || (item?.language == 'ja')?
+                                        (item?.language !== 'en' && item?.language !== 'km' && item?.language !== 'da' && item?.language != 'zh' && item?.language !== 'unknown' && item?.language) || (item?.language == 'ja') ?
                                           <span
                                             onClick={() => ArabicTranslation(item?.message_text, item?.id)}
                                             className={

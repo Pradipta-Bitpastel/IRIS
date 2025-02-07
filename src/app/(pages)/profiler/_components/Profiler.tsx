@@ -102,7 +102,7 @@ const ProfilePage = (({ profilerData }) => {
         const transformedData = transformJsonToArray(profilerData?.social_data);
         setSociaData(transformedData);
     }, [profilerData])
-    // console.log(profilerData);
+    console.log(profilerData,'profilerData');
 
     return (
         <>
@@ -471,7 +471,7 @@ const ProfilePage = (({ profilerData }) => {
                                                                         )
                                                                     }
 
-                                                                    {
+                                                                    {/* {
                                                                         sociaData[index].viewcaller && sociaData[index].viewcaller.length > 0 && (
                                                                             <div className="col-lg-3 col-md-6" key={index + Date.now()}>
                                                                                 <div className='social-content-item-main'>
@@ -496,7 +496,7 @@ const ProfilePage = (({ profilerData }) => {
                                                                                 </div>
                                                                             </div >
                                                                         )
-                                                                    }
+                                                                    } */}
                                                                 </>
                                                             )
                                                         })
