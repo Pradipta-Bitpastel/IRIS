@@ -622,9 +622,9 @@ const ListOfDetail = memo(({ listDetail, setListDetail, listDetailInfo, restrict
                                             </p>
                                             <span>
                                               {
-                                                (searchItem as TSearchEntityApiSerializerResponse).first_name ?
-                                                  (searchItem as TSearchEntityApiSerializerResponse).first_name
-                                                  : (searchItem as TSearchEntityApiSerializerResponse).phone
+                                                !searchItem.first_name || searchItem.first_name==='N/A'?
+                                                  searchItem.phone
+                                                  : searchItem.first_name
                                               }
                                             </span>
                                             <div className="d-flex">

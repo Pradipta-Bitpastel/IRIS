@@ -1,295 +1,233 @@
 import React, { useEffect, useRef, useState } from "react";
-import Slider from "react-slick";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs } from "swiper/modules";
 import ReactPlayer from "react-player";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
 import { video_icon_path, audio_icon_path, pdf_icon_path } from "@/constants";
-import $, { each } from "jquery";
+import $ from "jquery";
 
-const CustomPaging = ({ finalMediaArr, currentSlide }) => {
-  const renderThumbnails = () => {
-    const thumbnails = [];
+const LightBoxForMedia = ({ mediaArr, mediaIdForLightbox }) => {
+    if (!mediaArr) return null;
 
-    for (let i = 0; i < finalMediaArr.length; i += 3) {
-      const startIndex = i;
-      const endIndex = Math.min(i + 2, finalMediaArr.length - 1);
+    const finalMediaArr = [...mediaArr];
+    const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const [mainSwiper, setMainSwiper] = useState(null);
+    const [autoplay, setAutoplay] = useState(false);
+    const [isBuffering, setIsBuffering] = useState(false);
+    const playerRef = useRef(null);
+    const lightboxRef = useRef(null);
 
-      const thumbnailGroup = finalMediaArr.slice(startIndex, endIndex + 1);
+    const mediaIndex = mediaArr.findIndex((media) => media?.id == mediaIdForLightbox);
 
-      thumbnails.push(
-        <div key={i} className="thumbnail-group">
-          {thumbnailGroup.map((media, index) => (
-            <div
-              key={index}
-              className={`thumbnail ${
-                currentSlide >= startIndex && currentSlide <= endIndex
-                  ? "selected"
-                  : ""
-              }`}
-            >
-              <img
-                src={`/${mediaPath}/${media.thumbnail_img}`}
-                alt={`Thumbnail ${index + 1}`}
-                className="img-fluid"
-              />
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    return thumbnails;
-  };
-
-  return <div className="custom-paging">{renderThumbnails()}</div>;
-};
-
-const LightBOxForMedia = ({ mediaArr, mediaIdForLightbox }) => {
-  if (!mediaArr) return null;
-
-  const finalMediaArr = [...mediaArr];
-  const focus = useRef();
-  // const media_path = mediaPath;
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const slider1Ref = useRef(null);
-  const slider2Ref = useRef(null);
-  const [autoplay, setAutoplay] = useState(false);
-  const playerRef = useRef(null);
-  const mediaIdIndex = finalMediaArr.findIndex(
-    (mediaItem) => mediaItem?.id == mediaIdForLightbox
-  );
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (focus.current && !focus.current.contains(event.target)) {
-        $("#overlay-lightbox").css("display", "none");
-        $("#lightBox-popup").css("display", "none");
-        // $(".search_group_details_main_card_body .search_group_details_inner_card.relative_pos ").attr("style", "");
-
-        if (playerRef.current) {
-          playerRef.current.seekTo(0); // Reset video to start (optional)
-          playerRef.current.getInternalPlayer().pause(); // Pause the video/audio
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (lightboxRef.current && !lightboxRef.current.contains(event.target)) {
+                $("#overlay-lightbox, #lightBox-popup").hide();
+                if (playerRef.current) {
+                    playerRef.current.seekTo(0);
+                    playerRef.current.getInternalPlayer().pause();
+                }
+            }
         }
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+    useEffect(() => {
+        if (mainSwiper && mediaIndex !== -1) {
+            mainSwiper.slideTo(mediaIndex); // Update to selected media
+        }
+    }, [mediaIndex, mainSwiper]);
+    const handleSlideChange = () => {
+        // Pause any active media
+        const allPlayers = document.querySelectorAll("video, audio");
+        allPlayers.forEach((player) => {
+            player.pause(); // Pause all media elements
+            player.currentTime = 0; // Reset media to start
+        });
+    
+        // Reset the ReactPlayer instance
+        if (playerRef.current) {
+            try {
+                playerRef.current.seekTo(0);
+                playerRef.current.getInternalPlayer()?.pause?.();
+                setAutoplay(false);
+            } catch (error) {
+                console.error("Error pausing media:", error);
+            }
+        }
     };
-  }, [focus]);
+    
+    const closeLightbox = () => {
+        $("#overlay-lightbox, #lightBox-popup").hide();
+        if (playerRef.current) {
+            playerRef.current.seekTo(0);
+            playerRef.current.getInternalPlayer().pause();
+        }
+    };
+    console.log(mediaArr, "mediaArr");
+    // console.log(mediaIdForLightbox, "mediaIdForLightbox");
+    // console.log(mediaIndex, "mediaIndex");
+    return (
+        <div id="lightBox-popup" className="join_popup_modal lightbox_join_popup_modal" ref={lightboxRef}>
+            <div className="popup-body" style={{ zIndex: "9999999" }}>
+                <button className="close-button" onClick={closeLightbox}>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14px"
+                        height="14px"
+                        viewBox="0 0 15 15"
+                    >
+                        <path
+                            fill="#fff"
+                            d="M3.64 2.27L7.5 6.13l3.84-3.84A.92.92 0 0 1 12 2a1 1 0 0 1 1 1a.9.9 0 0 1-.27.66L8.84 7.5l3.89 3.89A.9.9 0 0 1 13 12a1 1 0 0 1-1 1a.92.92 0 0 1-.69-.27L7.5 8.87l-3.85 3.85A.92.92 0 0 1 3 13a1 1 0 0 1-1-1a.9.9 0 0 1 .27-.66L6.16 7.5L2.27 3.61A.9.9 0 0 1 2 3a1 1 0 0 1 1-1c.24.003.47.1.64.27"
+                        ></path>
+                    </svg>
+                </button>
 
-  // const settings = {
-  //   dots: true,
-  //   infinite: true,
-  //   speed: 500,
-  //   slidesToShow: 1,
-  //   slidesToScroll: 1,
-  //   afterChange: (index) => setCurrentSlide(index),
-  // };
-  slider2Ref?.current?.slickGoTo(mediaIdIndex);
-  slider1Ref?.current?.slickGoTo(mediaIdIndex);
-  useEffect(() => {
-    // console.log(mediaIdIndex, "mediaIdIndexx")
-    slider2Ref.current.slickGoTo(mediaIdIndex);
-    slider1Ref.current.slickGoTo(mediaIdIndex);
-  }, [mediaIdForLightbox, mediaIdIndex]);
-  const slider1Settings = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    lazyLoad: "progressive",
-    // initialSlide:mediaPath,
-    arrows: false, 
-    // initialSlide:mediaIdForLightbox,
-    // centerMode: true,
-    asNavFor: slider2Ref.current,
-    // beforeChange: (current, next) => {
-    //   slider2Ref.current.slickGoTo(next);
-    // },
-    // beforeChange: (_, next) => {
-    //   // Pause video when changing slide
-    //   setAutoplay(false);
-    // },
-  };
-
-  const slider2Settings = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    autoplay: false,
-    arrows: false,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    useTransform: false,
-    // lazyLoad:'progressive',
-    asNavFor: slider1Ref.current, // Assumes slider1Ref is properly set up
-    beforeChange: (current, next) => {
-      slider1Ref.current.slickGoTo(next);
-    },
-    focusOnSelect: true,
-    centerMode: true, // This ensures the slides are centered
-    centerPadding: "0", // Optional: Adjust this to control the gap between slides
-    responsive: [
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          centerMode: true, // Center the slides in smaller screens
-          centerPadding: "0",
-        },
-      },
-    ],
-  };
-
-  const closeLightbox = () => {
-    $("#overlay-lightbox").css("display", "none");
-    $("#lightBox-popup").css("display", "none");
-    if (playerRef.current) {
-      playerRef.current.seekTo(0); // Reset video to start (optional)
-      playerRef.current.getInternalPlayer().pause(); // Pause the video/audio
-    }
-  };
-
-  // console.log(finalMediaArr, "finalMediaArr");
-
-  return (
-    <>
-      <div
-        id="lightBox-popup"
-        className="join_popup_modal lightbox_join_popup_modal"
-        ref={focus}
-      >
-        <div className="popup-body" style={{ zIndex: "9999999" }}>
-          {/* {console.log(mediaIdForLightbox, "media iddd")} */}
-          {/* <CustomPaging finalMediaArr={finalMediaArr} currentSlide={currentSlide} /> */}
-          <button className="close-button" onClick={closeLightbox}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14px"
-              height="14px"
-              viewBox="0 0 15 15"
-            >
-              <path
-                fill="#fff"
-                d="M3.64 2.27L7.5 6.13l3.84-3.84A.92.92 0 0 1 12 2a1 1 0 0 1 1 1a.9.9 0 0 1-.27.66L8.84 7.5l3.89 3.89A.9.9 0 0 1 13 12a1 1 0 0 1-1 1a.92.92 0 0 1-.69-.27L7.5 8.87l-3.85 3.85A.92.92 0 0 1 3 13a1 1 0 0 1-1-1a.9.9 0 0 1 .27-.66L6.16 7.5L2.27 3.61A.9.9 0 0 1 2 3a1 1 0 0 1 1-1c.24.003.47.1.64.27"
-              ></path>
-            </svg>
-          </button>
-          <Slider {...slider1Settings} ref={slider1Ref} className="slider1">
-            {finalMediaArr.map((eachMediaObj, eachMediaObjIndex) => {
-              // console.log(eachMediaObj?.message_media?.media_type)
-              return (
-                <div
-                  key={eachMediaObjIndex}
-                  className="lightbox-media-gallery-card"
+                {/* Main Swiper */}
+                <Swiper
+                    spaceBetween={10}
+                    navigation={false}
+                    onSlideChange={handleSlideChange} 
+                    thumbs={{ swiper: thumbsSwiper }}
+                    onSwiper={setMainSwiper}  // Get Swiper instance
+                    modules={[Navigation, Thumbs]}
+                    className="main-swiper"
                 >
-                  {eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                  "video" ? (
-                    <ReactPlayer
-                      ref={playerRef}
-                      url={eachMediaObj?.message_media?.media_url}
-                      width="100%"
-                      height="430px"
-                      style={{
-                        zIndex: 15,
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
-                        position: "relative",
-                      }}
-                      playing={autoplay}
-                      // onStart={() => setAutoplay(true)}
-                      onPlay={() => setAutoplay(true)}
-                      onPause={() => setAutoplay(false)}
-                      controls={true}
-                      muted={true}
-                    />
-                  ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                    "audio" ? (
-                    <img
-                      src={`${audio_icon_path}`}
-                      // fill={true}
-                      className="img-fluid"
-                      id={`id-${eachMediaObj?.id}`}
-                    />
-                  ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                      "document" ||
-                    eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                      "pdf" ? (
-                    <img
-                      src={`${pdf_icon_path}`}
-                      alt="PDF Thumbnail"
-                      className="img-fluid"
-                    />
-                  ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                      "image" ||
-                    eachMediaObj?.file_type?.split("/")[0] == "image" ? (
-                    <img
-                      src={
-                        eachMediaObj?.message_media?.media_url ||
-                        eachMediaObj?.file_url
-                      }
-                      alt="Image Thumbnail"
-                      className="img-fluid"
-                    />
-                  ) : null}
-                </div>
-              );
-            })}
-          </Slider>
-          <Slider {...slider2Settings} ref={slider2Ref} className="slider2">
-            {finalMediaArr.map((eachMediaObj, eachMediaObjIndex) => (
-              <div
-                key={eachMediaObjIndex}
-                className="lightbox-media-gallery-card"
-              >
-                {eachMediaObj?.message_media?.media_type?.split("/")[0] ===
-                "video" ? (
-                  <img
-                    src={`${
-                      video_icon_path ||
-                      eachMediaObj?.message_media?.thumbnail_url
-                    }`}
-                    alt="Audio Thumbnail"
-                    className="img-fluid"
-                  />
-                ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ===
-                  "audio" ? (
-                  <img
-                    src={`${audio_icon_path}`}
-                    alt="Audio Thumbnail"
-                    className="img-fluid"
-                  />
-                ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                    "document" ||
-                  eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                    "pdf" ? (
-                  <img
-                    src={`${pdf_icon_path}`}
-                    alt="PDF Thumbnail"
-                    className="img-fluid"
-                  />
-                ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
-                    "image" ||
-                  eachMediaObj?.file_type?.split("/")[0] == "image" ? (
-                  <img
-                    src={`${
-                      eachMediaObj?.message_media?.media_url ||
-                      eachMediaObj?.file_url
-                    }`}
-                    alt="Image Thumbnail"
-                    className="img-fluid"
-                  />
-                ) : null}
-              </div>
-            ))}
-          </Slider>
+                    {finalMediaArr.map((media, index) => (
+                        <SwiperSlide key={index} className="lightbox-media-gallery-card">
+                            {media?.message_media?.media_type?.startsWith("video") ? (
+                                // <ReactPlayer
+                                //     ref={playerRef}
+                                //     url={media?.message_media?.media_url}
+                                //     width="100%"
+                                //     height="510px"
+                                //     playing={autoplay}
+                                //     onPlay={() => setAutoplay(true)}
+                                //     onPause={() => setAutoplay(false)}
+                                //     controls
+                                //     muted
+                                // />
+                                <div style={{ position: "relative" }}>
+                                    <ReactPlayer
+                                        ref={playerRef}
+                                        url={media?.message_media?.media_url}
+                                        width="100%"
+                                        height="510px"
+                                        playing={autoplay}
+                                        onPlay={() => setAutoplay(true)}
+                                        onPause={() => setAutoplay(false)}
+                                        // onBuffer={() => setIsBuffering(true)} // Start loader on buffering
+                                        // onBufferEnd={() => setIsBuffering(false)} // Hide loader when done
+                                        controls
+                                        muted
+                                    />
+                                </div>
+                            ) : media?.message_media?.media_type == "unknown" || media?.message_media?.media_type?.startsWith("audio") ? (
+                                // <ReactPlayer
+                                //     ref={playerRef}
+                                //     url={media?.message_media?.media_url}
+                                //     width="100%"
+                                //     height="510px"
+                                //     playing={autoplay}
+                                //     onPlay={() => setAutoplay(true)}
+                                //     onPause={() => setAutoplay(false)}
+                                //     controls
+                                //     muted
+                                // />
+                                <div style={{ position: "relative" }}>
+                                    <ReactPlayer
+                                        ref={playerRef}
+                                        url={media?.message_media?.media_url}
+                                        width="100%"
+                                        height="510px"
+                                        playing={autoplay}
+                                        onPlay={() => setAutoplay(true)}
+                                        onPause={() => setAutoplay(false)}
+                                        // onBuffer={() => setIsBuffering(true)} // Start loader on buffering
+                                        // onBufferEnd={() => setIsBuffering(false)} // Hide loader when done
+                                        controls
+                                        muted
+                                    />
+                                </div>
+                            ) : media?.message_media?.media_type?.startsWith("application") ? (
+                                // <img src={pdf_icon_path} alt="PDF Thumbnail" className="img-fluid" />
+                                <button
+                                    onClick={() => {
+                                        const pdfUrl = media?.message_media?.media_url;
+                                        window.open(pdfUrl, "_blank");
+                                    }}
+                                    className="pdf-preview-button w-100"
+                                >
+                                    <img src={pdf_icon_path} alt="PDF Thumbnail" className="img-fluid" style={{'width':'100% !important'}} />
+                                    <p className="text-black">Click to download PDF</p>
+                                </button>
+                                
+                            ) : (
+                                <img src={media?.message_media?.media_url || media?.file_url || media} alt="Image Thumbnail" className="img-fluid" />
+                            )}
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+
+                {/* Thumbnail Swiper */}
+                <Swiper
+                    onSwiper={setThumbsSwiper}
+                    spaceBetween={10}
+                    slidesPerView={5}
+                    watchSlidesProgress
+                    className="thumbnail-swiper"
+                >
+                    {finalMediaArr.map((eachMediaObj, eachMediaObjIndex) => (
+                        <SwiperSlide key={eachMediaObjIndex} className="lightbox-media-gallery-card">
+                            {eachMediaObj?.message_media?.media_type?.split("/")[0] ===
+                                "video" ? (
+                                <img
+                                    src={`${video_icon_path ||
+                                        eachMediaObj?.message_media?.thumbnail_url
+                                        }`}
+                                    alt="Audio Thumbnail"
+                                    className="img-fluid"
+                                />
+                            ) : eachMediaObj?.message_media?.media_type?.split("/")[0] == "audio" ? (
+                                <img
+                                    src={`${audio_icon_path}`}
+                                    alt="Audio Thumbnail"
+                                    className="img-fluid bg-white"
+                                />
+                            ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
+                                "application" ||
+                                eachMediaObj?.message_media?.media_type?.split("/")[0] ==
+                                "pdf" ? (
+                                <img
+                                    src={`${pdf_icon_path}`}
+                                    alt="PDF Thumbnail"
+                                    className="img-fluid"
+                                />
+                            ) : eachMediaObj?.message_media?.media_type?.split("/")[0] ==
+                                "image" ||
+                                eachMediaObj?.file_type?.split("/")[0] == "image" ? (
+                                <img
+                                    src={`${eachMediaObj?.message_media?.media_url ||
+                                        eachMediaObj?.file_url ||
+                                        eachMediaObj
+                                        }`}
+                                    alt="Image Thumbnail"
+                                    className="img-fluid"
+                                />
+                            ) : 
+                            (
+                                <img src={eachMediaObj?.message_media?.media_url || eachMediaObj?.file_url || eachMediaObj} alt="Image Thumbnail" className="img-fluid" />
+                            )
+                            }
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </div>
         </div>
-      </div>
-    </>
-  );
+    );
 };
 
-export default LightBOxForMedia;
+export default LightBoxForMedia;

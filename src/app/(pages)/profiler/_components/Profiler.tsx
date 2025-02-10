@@ -6,6 +6,8 @@ import Image from 'next/image';
 import callappsvg from '@/_assets/images/callapp.jpeg'
 import eyeconsvg from '@/_assets/images/eyecon.png'
 import truecallersvg from '@/_assets/images/truecaller.png'
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 // import { profilerData } from "@/_assets/datasets/db";
 const ProfilePage = (({ profilerData }) => {
 
@@ -13,6 +15,7 @@ const ProfilePage = (({ profilerData }) => {
     const dropdownMenuRef = useRef<HTMLUListElement>(null);
     const dropdownArrowRef = useRef<HTMLSpanElement>(null);
     const [sociaData, setSociaData] = useState([])
+    const router = useRouter();
     const toggleDropdown = () => {
         const dropdownMenu = dropdownMenuRef.current;
         const dropdownArrow = dropdownArrowRef.current;
@@ -102,7 +105,7 @@ const ProfilePage = (({ profilerData }) => {
         const transformedData = transformJsonToArray(profilerData?.social_data);
         setSociaData(transformedData);
     }, [profilerData])
-    console.log(profilerData,'profilerData');
+    console.log(profilerData, 'profilerData');
 
     return (
         <>
@@ -114,8 +117,28 @@ const ProfilePage = (({ profilerData }) => {
                 <div className="container-fluid">
                     <div className="profilerpage_main_wrapper">
                         <div className="profilepage-uppercontent">
+                            <div className="back-area">
+                                <Link className="back-link" href="#" onClick={(e) => { e.preventDefault(); router.back(); }}>
+                                    <svg className='back-svg'
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="10"
+                                        height="20"
+                                        viewBox="0 0 10 20"
+                                        fill="none"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            clip-rule="evenodd"
+                                            d="M1.53583 10.5925L6.25 15.3067L7.42833 14.1283L3.30333 10.0033L7.42833 5.87833L6.25 4.7L1.53583 9.41416C1.37961 9.57044 1.29184 9.78236 1.29184 10.0033C1.29184 10.2243 1.37961 10.4362 1.53583 10.5925Z"
+                                            fill="white"
+                                        />
+                                    </svg>
+                                    <span>Back</span>
+                                </Link>
+                            </div>
                             <div className="row gx-2">
                                 <div className="col-lg-4 col-md-6">
+
                                     <div className="profile-pictures">
                                         <ProfilePicturesComponent images={profilerData?.profile_image_url} />
                                     </div>
@@ -139,54 +162,48 @@ const ProfilePage = (({ profilerData }) => {
                                         </div>
                                         <div className="profile-information-area-content">
                                             <div className='profile-information-area-content-item'>
-                                                <span>Name</span>
-                                                <span><p>{profilerData?.surname ? profilerData?.surname : ''} {profilerData?.first_name ? profilerData?.first_name : '-'}</p></span>
+                                                <span>First Name:</span>
+                                                <span><p>{profilerData?.first_name ? profilerData?.first_name : '-'} </p></span>
+                                            </div>
+                                            <div className='profile-information-area-content-item'>
+                                                <span>Last Name:</span>
+                                                <span><p>{profilerData?.last_name ? profilerData?.last_name : '-'}</p></span>
+                                            </div>
+                                            <div className='profile-information-area-content-item'>
+                                                <span>Gender:</span>
+                                                <span><p>{profilerData?.gender ? profilerData?.gender : '-'}</p></span>
                                             </div>
                                             <div className='profile-information-area-content-item'>
                                                 <span>Date Of Birth</span>
                                                 <span><p>{profilerData?.date_of_birth ? profilerData?.date_of_birth : '-'}</p></span>
                                             </div>
                                             <div className='profile-information-area-content-item'>
-                                                <span>Relevant identifiers</span>
-                                                <span><p>{profilerData?.group_memberships ? profilerData?.group_memberships[0]?.group?.group_name : '-'}</p></span>
+                                                <span>Skills:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Person</span>
-                                                <span><p>{profilerData?.surname ? profilerData?.surname : '-'}</p></span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Languages:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Phone number</span>
-                                                <span>
-                                                    <p>{profilerData?.phone_number ? profilerData?.phone_number : '-'}</p>
-                                                </span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Device Type:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Email address</span>
-                                                <span><p>-</p></span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Description:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Username</span>
-                                                <span>
-                                                    <p>{profilerData?.surname ? profilerData?.surname : '-'}</p>
-                                                </span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Education:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Residences</span>
-                                                <span>
-                                                    <p>{profilerData?.location ? profilerData?.location : '-'}</p>
-                                                </span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Location:</span>
+                                                <p>N/A</p>
                                             </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Locations</span>
-                                                <span><p>{profilerData?.location ? profilerData?.location : '-'}</p></span>
-                                            </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Employment</span>
-                                                <span><p>-</p></span>
-                                            </div>
-                                            <div className='profile-information-area-content-item'>
-                                                <span>Education</span>
-                                                <span><p>-</p></span>
+                                            <div className="profile-information-area-content-item">
+                                                <span>Sources:</span>
+                                                <p>N/A</p>
                                             </div>
                                         </div>
                                     </div>
@@ -451,7 +468,7 @@ const ProfilePage = (({ profilerData }) => {
                                                                                     <div className='social-meadia-content-item'>
                                                                                         <span className="social-tag-main">
                                                                                             <span className='social-tag-icon'>
-                                                                                                
+
                                                                                                 <Image
                                                                                                     src={eyeconsvg?.src}
                                                                                                     width={20}

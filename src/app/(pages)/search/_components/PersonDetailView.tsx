@@ -48,7 +48,7 @@ import { getMediaType, translateText } from "../helpers";
 import { Tooltip } from "@mui/material";
 import { translateData } from "../types/type";
 import { useRouter } from "next/navigation";
-
+import profile from "@/_assets/images/default_user.png";
 type TProps = {
   entityDetails: Record<string, any>;
   search_str: string;
@@ -205,7 +205,13 @@ const PersonDetailView = memo(
             ...response?.data,
             result: [...entityMessages.result, ...response?.data?.result],
           });
-
+          const modifiedData = response?.data?.result.map((entityMedia) => {
+            const media_type = getMediaType(entityMedia?.media_url || "");
+            return { ...entityMedia, media_type };
+          });
+          console.log(modifiedData, "modifiedData");
+          
+          setEntityMedias([...entityMedias, ...modifiedData]);
           offset = offset + limit;
 
           if (+response?.data?.count > offset) {
@@ -214,16 +220,16 @@ const PersonDetailView = memo(
             setShowMoreMessageOffsetCount(-1);
           }
         } else {
-          const errorMessage: TErrorMessage = generalizedApiError;
+          // const errorMessage: TErrorMessage = generalizedApiError;
 
-          const toastErrorSettingDataCpy: TToastErrorSettingData =
-            toastSettingData;
-          toast.error(
-            allowableServerErrors.includes(errorMessage)
-              ? errorMessage
-              : generalizedApiError,
-            toastErrorSettingDataCpy
-          );
+          // const toastErrorSettingDataCpy: TToastErrorSettingData =
+          //   toastSettingData;
+          // toast.error(
+          //   allowableServerErrors.includes(errorMessage)
+          //     ? errorMessage
+          //     : generalizedApiError,
+          //   toastErrorSettingDataCpy
+          // );
         }
       } catch (error) {
         setDetailSectionTabLoader(false);
@@ -481,19 +487,24 @@ const PersonDetailView = memo(
             "post"
           );
 
-          // console.log("response", response);
+          console.log("response", response);
 
           if (response.status == "200") {
             router.push(`/profiler/${entityDetails && entityDetails?.id}`);
             setDetailSectionTabLoader(false);
           } else if (response.status == "ERROR") {
             toast.error(response?.message);
+          } else {
+
           }
         } else {
 
         }
       } catch (error) {
         console.log(error);
+        toast.error(
+          error
+        );
       } finally {
         setDetailSectionTabLoader(false);
       }
@@ -517,7 +528,7 @@ const PersonDetailView = memo(
                 <div className="search_result_inner_people_profile_img">
                   <img
                     src={`${(entityDetails?.profile_image_url &&
-                        entityDetails?.profile_image_url[0]) ||
+                      entityDetails?.profile_image_url[0]) ||
                       "/asset/default_img/default_img.jpg"
                       }`}
                     // fill={true}
@@ -853,107 +864,185 @@ const PersonDetailView = memo(
                         >
                           <div className="scroll-y">
                             {entityMessages?.result?.length > 0 ? (
-                              // messagesOfMember.slice(0,upperCountOfArr).map((messageOfMemberObj,messageOfMemberObjIndex)=>{
                               entityMessages.result.map(
                                 (
-                                  messageOfMemberObj,
-                                  messageOfMemberObjIndex
+                                  item,
+                                  index
                                 ) => {
+                                  const isMediaAvailable = item?.message_media;
                                   return (
-                                    <div
-                                      key={messageOfMemberObjIndex}
-                                      className={`search_result_inner_people dark_bg ${Object.keys(messageOfMemberObj).includes('is_deleted') && messageOfMemberObj?.is_deleted=='1' ? "deleted" : ""}`}
+                                    <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted == '1' ? "deleted" : ""}`}
                                     >
-                                      <div
-                                        className="search_result_people_overlay"
-                                        onClick={goToDetailsPage}
-                                        id={`message-${messageOfMemberObj.id}`}
-                                      ></div>
-                                      <div className="search_result_inner_people_card persondetails relative_pos">
-                                        <div className="search_result_inner_people_card_left">
-                                          <div className="search_result_inner_people_content_area">
-                                            <div className="search_result_inner_people_content_area_title">
-                                              <span>
-                                                {messageOfMemberObj?.group_name}
-                                              </span>
-                                            </div>
-                                            <p className="mt-1">
-                                              {messageOfMemberObj.message_text}
+
+                                      {/* Overlay for navigating to details */}
+                                      <div className="search_result_people_overlay" onClick={goToDetailsPage} id={`message-${item.id}`}></div>
+
+                                      {/* Entity Profile Image */}
+                                      <div className="search_group_details_inner_card_image details-clickable-img-zIndex">
+                                        <img onClick={goToDetailsPage} id={`entity-${item?.id}`} src={`${profile.src || item?.profile_image_url}`} className="img-fluid" alt="people image" />
+                                      </div>
+
+                                      {/* Message Content */}
+                                      <div className="search_group_details_inner_card_content">
+                                        {
+                                          !isMediaAvailable && (
+                                            <p>
+                                              {item?.message_text}
                                             </p>
-                                            <div className="d-flex justify-content-between mt-1">
-                                              {(messageOfMemberObj?.language !==
-                                                "en" &&
-                                                messageOfMemberObj?.language !==
-                                                "km" &&
-                                                messageOfMemberObj?.language !==
-                                                "da" &&
-                                                messageOfMemberObj?.language !=
-                                                "zh" &&
-                                                messageOfMemberObj?.language !==
-                                                "unknown" &&
-                                                messageOfMemberObj?.language) ||
-                                                messageOfMemberObj?.language ==
-                                                "ja" ? (
-                                                <div className="translator-btn">
-                                                  <span
-                                                    onClick={() =>
-                                                      ArabicTranslation(
-                                                        messageOfMemberObj?.message_text,
-                                                        messageOfMemberObj?.id
-                                                      )
-                                                    }
-                                                    className={
-                                                      translateData.some(
-                                                        (translation) =>
-                                                          translation.messageId ===
-                                                          messageOfMemberObj?.id &&
-                                                          translation.status
-                                                      )
-                                                        ? "active"
-                                                        : ""
-                                                    }
-                                                  >
-                                                    Translate
-                                                  </span>
-                                                </div>
-                                              ) : (
-                                                ""
-                                              )}
 
-                                              <span>
-                                                {dateFormatter(
-                                                  messageOfMemberObj.timestamp
-                                                )}{" "}
-                                                |{" "}
-                                                {dateFormatter(
-                                                  messageOfMemberObj?.timestamp,
-                                                  true
-                                                )}
-                                              </span>
-                                            </div>
+                                          )
+                                        }
+                                        {
+                                          isMediaAvailable &&
+                                          (
 
-                                            {/* Translated Message Section */}
-                                            {translateData
-                                              .filter(
-                                                (translation) =>
-                                                  translation.messageId ===
-                                                  messageOfMemberObj?.id &&
-                                                  translation.status
-                                              )
-                                              .map((translation) => (
-                                                <div
-                                                  className="translated-msg-section"
-                                                  id="translateSec"
-                                                  key={translation.messageId}
-                                                >
-                                                  <p>{translation.message}</p>
-                                                </div>
-                                              ))}
-                                          </div>
+
+                                            (Array.isArray(item.message_media) ? (
+                                              item.message_media.map((media, mediaIndex) => {
+                                                const mediaType = media.media_type.split("/")[0];
+                                                // Extract main type (image, video, etc.)
+                                                return (
+                                                  <div key={mediaIndex} className="media-container">
+                                                    {mediaType === "image" ? (
+                                                      <img
+                                                        src={media.thumbnail_url || media.media_url}
+                                                        alt="media thumbnail"
+                                                        className="img-fluid"
+                                                        onClick={openLightBox}  // Update: Use media URL for lightbox
+                                                        id={`id-${media?.id}`}
+                                                      />
+                                                    ) : mediaType === "video" ? (
+                                                      <video
+                                                        controls
+                                                        className="img-fluid"
+                                                        // onClick={openLightBox}
+                                                        id={`id-${media?.id}`} // Update: Use media URL for lightbox
+                                                      >
+                                                        <source src={media.media_url} type={media.media_type} />
+                                                        Your browser does not support the video tag.
+                                                      </video>
+                                                    ) : mediaType === "audio" ? (
+                                                      <audio controls className="audio-player">
+                                                        <source src={media.media_url} type={media.media_type} />
+                                                        Your browser does not support the audio tag.
+                                                      </audio>
+                                                    ) : (
+                                                      <div className="unsupported-media">
+                                                        <p>Unsupported media type</p>
+                                                      </div>
+                                                    )}
+                                                    <p>Media Type: {media.media_type.split("/")[1]}</p>
+                                                  </div>
+                                                );
+                                              })
+                                            ) : (
+                                              <div className="media-container">
+                                                {(() => {
+                                                  const eachMediaType = item.message_media?.media_type.split("/")[0]; // Extract main type
+                                                  console.log(eachMediaType, "mediaType");
+                                                  if (eachMediaType === "image") {
+                                                    return (
+                                                      <img
+                                                        src={item.message_media.media_url || item.message_media.thumbnail_url}
+                                                        alt="media thumbnail"
+                                                        className="img-fluid"
+                                                        id={`id-${item?.id}`}
+                                                        onClick={openLightBox}  // Update: Use media URL for lightbox
+                                                      />
+                                                    );
+                                                  } else if (eachMediaType === "video") {
+                                                    return (
+                                                      <div className="media-gallery-card">
+                                                        <div className="media-gallery-card-inner-img">
+                                                          <img
+                                                            src={`${video_icon_path || item?.message_media?.thumbnail_url}`}
+                                                            className="img-fluid"
+                                                            onClick={openLightBox}  // Update: Use media URL for lightbox
+                                                            id={`id-${item?.id}`}
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                    );
+                                                  } else if (["document", "application"].includes(eachMediaType)) {
+                                                    return (
+                                                      <div className="media-gallery-card">
+                                                        <div className="media-gallery-card-inner-img">
+                                                          <img
+                                                            src={`${pdf_icon_path}`}
+                                                            className="img-fluid"
+                                                            onClick={openLightBox}  // Update: Use media URL for lightbox
+                                                            id={`id-${item?.id}`}
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                    );
+                                                  } else if (item.message_media?.media_type == 'unknown' || eachMediaType === "audio") {
+                                                    return (
+                                                      <div className="media-gallery-card">
+                                                        <div className="media-gallery-card-inner-img">
+                                                          <img
+                                                            src={`${audio_icon_path}`}
+                                                            className="img-fluid"
+                                                            onClick={openLightBox}  // Update: Use media URL for lightbox
+                                                            id={`id-${item?.id}`}
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                    );
+                                                  } else {
+                                                    return (
+                                                      <div className="unsupported-media">
+                                                        <p>Unsupported media type</p>
+                                                      </div>
+                                                    );
+                                                  }
+                                                })()}
+                                              </div>
+                                            ))
+                                          )}
+
+                                        {/* Footer Section with Phone and Timestamp */}
+                                        <div className="d-flex justify-content-between">
+                                          <span>{item?.entity?.phone_number}</span>
+                                          <span>{dateFormatter(item?.timestamp)} | {dateFormatter(item?.timestamp, true)}</span>
                                         </div>
+
+                                        {/* Translator Button */}
+                                        {/* <div className="translator-btn">
+
+                                          {
+                                             !isMediaAvailable &&
+                                            ( item?.language !== 'en' && item?.language !== 'km' && item?.language !== 'da' && item?.language != 'zh' && item?.language !== 'unknown' && item?.language) || (item?.language == 'ja') ?
+                                              <span
+                                                onClick={() => ArabicTranslation(item?.message_text, item?.id)}
+                                                className={
+                                                  translateData.some(
+                                                    (translation) =>
+                                                      translation.messageId === item?.id && translation.status
+                                                  )
+                                                    ? "active"
+                                                    : ""
+                                                }
+                                              >
+                                                Translate
+                                              </span>
+                                              : ''
+                                          }
+                                        </div> */}
+
+                                        {/* Translated Message Section */}
+                                        {translateData
+                                          .filter(
+                                            (translation) =>
+                                              translation.messageId === item?.id && translation.status
+                                          )
+                                          .map((translation) => (
+                                            <div className="translated-msg-section" id="translateSec" key={translation.messageId}>
+                                              <p>{translation.message}</p>
+                                            </div>
+                                          ))}
                                       </div>
                                     </div>
-                                    // </div>
                                   );
                                 }
                               )

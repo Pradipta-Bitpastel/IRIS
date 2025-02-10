@@ -1449,6 +1449,7 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
   // searchFilterApi()
   return (
     <>
+      <ToastContainer/>
       <div className="dashboard_main">
         <section className="search_dashboard">
           <div className="container-fluid ">
@@ -2127,8 +2128,12 @@ const SearchLeaf = memo(({ params }: { params: { id: string; type: string; msg_i
 
                                                       {/* {searchItem.common_name_prop} */}
                                                     </p>
-
-                                                    <span>{searchItem.first_name ? searchItem.first_name : searchItem.phone}</span>
+                                                      
+                                                    <span>  {
+                                                      !searchItem.first_name || searchItem.first_name === 'N/A' ?
+                                                      searchItem.phone
+                                                        : searchItem.first_name
+                                                    }</span>
                                                     {
                                                       searchItem && searchItem?.alpha2_code && (
                                                         <div className="d-flex">

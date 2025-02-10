@@ -53,7 +53,7 @@ import {
   PointElement,
   LineElement,
   Title,
-  Tooltip,
+  // Tooltip,
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
@@ -63,14 +63,14 @@ import { count } from 'console';
 import { translateData } from '../types/type';
 import Link from 'next/link';
 //   import faker from 'faker';
-
+import { Tooltip } from "@mui/material";
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   Title,
-  Tooltip,
+  // Tooltip,
   Legend
 );
 type TProps = {
@@ -285,7 +285,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
         // console.log(response?.data, "dataaa of group messages", { ...response?.data, result: [...groupMessages.result, ...response?.data?.result] })
         // setDetailPageMedia(prev => ({ ...prev, ...response?.data?.result }));
         let mediaArr = response?.data?.result.filter((item: any) => {
-          return item?.message_media !== null && item?.message_text == null && item.message_media?.media_type !== "unknown"
+          return item?.message_media !== null && item?.message_text == null && item.message_media?.media_type
         })
         setGroupMedias((prev) => {
           const existingIds = new Set(prev.map((item) => item.id)); // Assuming each item has an `id`
@@ -642,7 +642,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
   }, [groupMembers, groupMessages, groupMedias]);
 
   console.log(groupMessages, "groupMessages");
-
+  console.log(searchMsgId);
 
   return (
     <div>
@@ -720,12 +720,29 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
             </div>
 
             <div className="join-group">
-              {/* <button onClick={clickJoinGroup} className="join-grp-btn"> */}
-              <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>
-                <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
-                  JOIN LINK
-                </button>
-              </Link>
+              {
+                groupDetails?.joinlink ?
+                  <>
+                    <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>
+                      <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
+                        JOIN LINK
+                      </button>
+                    </Link>
+                  </>
+                  :
+                  <Tooltip
+                    title={"Join Link is not available for this group"}
+                    placement="top"
+                    arrow
+                  >
+                    <Link href={groupDetails?.joinlink ? groupDetails?.joinlink : "javascript:void(0);"} className='join-grp-a' target={groupDetails?.joinlink ? '_blank' : ""}>
+                      <button className="join-grp-btn" disabled={groupDetails?.joinlink ? false : true}>
+                        JOIN LINK
+                      </button>
+                    </Link>
+
+                  </Tooltip>
+              }
 
             </div>
           </div>
@@ -758,6 +775,8 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                   <div className="search_group_details_main_card">
                     <div className="search_group_details_main_card_body" ref={(el) => { targetDivRefs.current.msg = el; }}>
                       {groupMessages?.result?.length > 0 ? (
+
+
                         searchMsgId > 0 ? (
 
                           groupMessages.result.slice(0, searchMsgId + 2).map((item, index) => {
@@ -765,7 +784,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
 
                             return (
 
-                              <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
+                              <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted == '1' ? "deleted" : ""}`}
                               >
                                 {/* <span>{item?.id}'/'{searchMsgId} '/' {index}</span> */}
                                 {/* Overlay for navigating to details */}
@@ -798,6 +817,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                     (Array.isArray(item.message_media) ? (
                                       item.message_media.map((media, mediaIndex) => {
                                         const mediaType = media.media_type.split("/")[0]; // Extract main type (image, video, etc.)
+                                        console.log(mediaType);
                                         return (
                                           <div key={mediaIndex} className="media-container">
                                             {mediaType === "image" ? (
@@ -964,7 +984,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                               const isMediaAvailable = item?.message_media;
 
                               return (
-                                <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted=='1' ? "deleted" : ""}`}
+                                <div key={index} className={`search_group_details_inner_card relative_pos ${Object.keys(item).includes('is_deleted') && item?.is_deleted == '1' ? "deleted" : ""}`}
                                 >
 
                                   {/* Overlay for navigating to details */}
@@ -997,7 +1017,11 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                       isMediaAvailable &&
                                       (Array.isArray(item.message_media) ? (
                                         item.message_media.map((media, mediaIndex) => {
-                                          const mediaType = media.media_type.split("/")[0]; // Extract main type (image, video, etc.)
+                                          const mediaType = media.media_type.split("/")[0];
+
+
+
+                                          // Extract main type (image, video, etc.)
                                           return (
                                             <div key={mediaIndex} className="media-container">
                                               {mediaType === "image" ? (
@@ -1036,6 +1060,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                         <div className="media-container">
                                           {(() => {
                                             const eachMediaType = item.message_media?.media_type.split("/")[0]; // Extract main type
+                                            console.log(eachMediaType, "mediaType");
                                             if (eachMediaType === "image") {
                                               return (
                                                 <img
@@ -1072,7 +1097,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                                   </div>
                                                 </div>
                                               );
-                                            } else if (eachMediaType === "audio") {
+                                            } else if (item.message_media?.media_type == 'unknown' || eachMediaType === "audio") {
                                               return (
                                                 <div className="media-gallery-card">
                                                   <div className="media-gallery-card-inner-img">
@@ -1196,7 +1221,7 @@ const GroupDetailView = memo(({ groupDetails, search_str, postSearchByKeyApiRequ
                                   <div className="tab_members_card_inner_list_content">
                                     <div className="tab_members_card_inner_lists_image ">
                                       <img
-                                        src={`${item?.entity?.profile_image_url || "/asset/default_img/default_img.jpg"}`}
+                                        src={`${item?.entity?.profile_image_url[0] || "/asset/default_img/default_img.jpg"}`}
                                         className="img-fluid"
                                         alt=""
                                       ></img>

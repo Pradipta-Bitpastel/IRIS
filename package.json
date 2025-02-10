@@ -44,7 +44,8 @@
     "react-slick": "^0.30.1",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
-    "sweetalert2": "^11.15.1"
+    "sweetalert2": "^11.15.1",
+    "swiper": "^11.2.2"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.31",
